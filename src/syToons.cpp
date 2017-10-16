@@ -20,8 +20,8 @@ AI_SHADER_NODE_EXPORT_METHODS(syToonsMethods);
 
 enum EngineParams
 {
-   S_SCANLINE = 0,
-   S_RAYTRACE
+	S_SCANLINE = 0,
+	S_RAYTRACE
 };
 
 const char* engine_params[] = 
@@ -33,11 +33,11 @@ const char* engine_params[] =
 
 enum Params {
 	p_engine,
-	p_Ka_color, 
-	p_Kd_color, 
-	p_Ks_color, 
+	p_Ka_color,
+	p_Kd_color,
+	p_Ks_color,
 	p_roughness,
-	p_specbalance 
+	p_specbalance
 };
 
 node_parameters
@@ -65,36 +65,38 @@ node_finish
 shader_evaluate
 {
 	// we provide two shading engine,traditional scanline and GI engine raytrace.
-   int shading_engine = AiShaderEvalParamInt(p_engine);
-   AtColor Ka = AiShaderEvalParamRGB(p_Ka_color);
-   AtColor Kd = AiShaderEvalParamRGB(p_Kd_color);
-   AtColor Ks = AiShaderEvalParamRGB(p_Ks_color);
-   float roughness = 10 / AiShaderEvalParamFlt(p_roughness);
-   // do shading
-   switch (shading_engine)
-   {
-   		case S_SCANLINE:
-   		{
+	int shading_engine = AiShaderEvalParamInt(p_engine);
+	// do shading
+	AtColor lighting_result = AI_RGB_BLACK;
+	switch (shading_engine)
+	{
+		case S_SCANLINE:
+		{
+			AtColor Ka = AiShaderEvalParamRGB(p_Ka_color);
+			AtColor Kd = AiShaderEvalParamRGB(p_Kd_color);
+			AtColor Ks = AiShaderEvalParamRGB(p_Ks_color);
+			float Wig = 0.28;
+			float roughness = 10 / AiShaderEvalParamFlt(p_roughness);
 			AiLightsPrepare(sg);
 			AtColor La = AI_RGB_BLACK; // initialize light accumulator to = 0
 			while (AiLightsGetSample(sg)) // loop over the lights
-			{ 
-			  float LdotN = AiV3Dot(sg->Ld, sg->Nf);
-			  if (LdotN < 0) LdotN = 0;
-			  AtVector H = AiV3Normalize(-sg->Rd + sg->Ld);
-			  float spec = AiV3Dot(sg->Nf, H); // N dot H
-			  if (spec < 0) spec = 0;
-			  // Lambertian diffuse
-			  La += sg->Li * sg->we * LdotN * Kd;
-			  // Blinn-Phong specular
-			  La += sg->Li * sg->we * pow(spec, roughness) * Ks;
+			{
+				float LdotN = AiV3Dot(sg->Ld, sg->Nf);
+				if (LdotN < 0) LdotN = 0;
+				AtVector H = AiV3Normalize(-sg->Rd + sg->Ld);
+				float spec = AiV3Dot(sg->Nf, H); // N dot H
+				if (spec < 0) spec = 0;
+				// Lambertian diffuse
+				La += sg->Li * Wig * sg->we * LdotN * Kd;
+				// Blinn-Phong specular
+				La += sg->Li * Wig * sg->we * pow(spec, roughness) * Ks;
 			}
 			// color = accumulated light + ambient
-			sg->out.RGB = La + Ka;
+			lighting_result = La + Ka;
 			break;   	   			
-   		}
-   		case S_RAYTRACE:
-   		{
+		}
+		case S_RAYTRACE:
+		{
 			// Kd (diffuse color), Ks (specular color), and roughness (scalar)
 			AtColor Kd = AiShaderEvalParamRGB(p_Kd_color);
 			AtColor Ks = AiShaderEvalParamRGB(p_Ks_color);
@@ -110,12 +112,12 @@ shader_evaluate
 			AiLightsPrepare(sg);
 			while (AiLightsGetSample(sg)) // loop over the lights to compute direct effects
 			{
-			  // direct specular
-			  if (AiLightGetAffectSpecular(sg->Lp))
-			     Dsa += AiEvaluateLightSample(sg, spec_data, AiWardDuerMISSample, AiWardDuerMISBRDF, AiWardDuerMISPDF) * specbalance;
-			  // direct diffuse
-			  if (AiLightGetAffectDiffuse(sg->Lp))
-			     Dda += AiEvaluateLightSample(sg, diff_data, AiOrenNayarMISSample, AiOrenNayarMISBRDF, AiOrenNayarMISPDF) * (1-specbalance);
+				// direct specular
+				if (AiLightGetAffectSpecular(sg->Lp))
+					Dsa += AiEvaluateLightSample(sg, spec_data, AiWardDuerMISSample, AiWardDuerMISBRDF, AiWardDuerMISPDF) * specbalance;
+				// direct diffuse
+				if (AiLightGetAffectDiffuse(sg->Lp))
+					Dda += AiEvaluateLightSample(sg, diff_data, AiOrenNayarMISSample, AiOrenNayarMISBRDF, AiOrenNayarMISPDF) * (1-specbalance);
 			}
 			// indirect specular
 			IDs = AiWardDuerIntegrate(&sg->Nf, sg, &sg->dPdu, &sg->dPdv, roughness, roughness) * specbalance;
@@ -123,13 +125,14 @@ shader_evaluate
 			IDd = AiOrenNayarIntegrate(&sg->Nf, sg, 0.0f) * (1-specbalance);
 
 			// add up indirect and direct contributions
-			sg->out.RGB = Kd * (Dda + IDd) + Ks * (Dsa + IDs);
+			lighting_result = Kd * (Dda + IDd) + Ks * (Dsa + IDs);
 			break;		
-   		}
-   		default:
-   		{
-   			sg->out.RGB = AI_RGB_RED;
-   			break;
-   		}
-   }
+			}
+		default:
+		{
+			lighting_result = AI_RGB_RED;
+			break;
+			}
+	}
+	sg->out.RGB = lighting_result;
 }
