@@ -15,7 +15,7 @@
 #include <ai.h>
 #include <cstring>
 
-#include <shader_utils.h>
+#include <al_util.h>
 
 AI_SHADER_NODE_EXPORT_METHODS(syToonsMethods);
 

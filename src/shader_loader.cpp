@@ -19,13 +19,13 @@
 
 extern AtNodeMethods* syToonsMethods;
 extern AtNodeMethods* syRampMethods;
-extern AtNodeMethods* syColorCorrectMethods;
+extern AtNodeMethods* syRemapMethods;
 
 enum SHADERS
 {
    syToons,
    syRamp,
-   syColorCorrect,
+   syRemap,
 };
 
 node_loader
@@ -44,10 +44,10 @@ node_loader
          node->name        = "syRamp";
          node->node_type   = AI_NODE_SHADER;
       break;
-      case syColorCorrect:
-         node->methods     = (AtNodeMethods*) syToonsMethods;
+      case syRemap:
+         node->methods     = (AtNodeMethods*) syRemapMethods;
          node->output_type = AI_TYPE_RGB;
-         node->name        = "syColorCorrect";
+         node->name        = "syRemap";
          node->node_type   = AI_NODE_SHADER;
       break;
       default:
