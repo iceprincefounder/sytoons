@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<templates>
-	<template name="AEsyRemapColor">
+	<template name="AEsyRemap">
 		<label>alRemapColor</label>
 		<description>Use controls such as gamma, saturation and contrast to tweak the color values in your network. Operations are applied in the order they appear in the shader.</description>
 		<attribute name="input" type="maya.float3">
@@ -45,11 +45,8 @@
 			<property name="gamma"/>
 			<property name="saturation"/>
 			<property name="hueOffset"/>
-			<group name="Contrast">
-				<label>Contrast</label>
-				<property name="contrast"/>
-				<property name="contrastPivot"/>
-			</group>
+			<property name="contrast"/>
+			<property name="contrastPivot"/>
 			<property name="gain"/>
 			<property name="exposure"/>
 			<property name="mask"/>

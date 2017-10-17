@@ -23,10 +23,8 @@ class AEsyRemapTemplate(alShadersTemplate):
 		self.addCustomFlt("gamma")
 		self.addCustomFlt("saturation")
 		self.addCustomFlt("hueOffset")
-		self.beginLayout("Contrast", collapse=True)
 		self.addCustomFlt("contrast")
 		self.addCustomFlt("contrastPivot")
-		self.endLayout() # END Contrast
 		self.addCustomFlt("gain")
 		self.addCustomFlt("exposure")
 		self.addCustomFlt("mask")
