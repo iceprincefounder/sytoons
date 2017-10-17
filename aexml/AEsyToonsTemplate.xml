@@ -1,1 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<templates>
+	<template name="AEsyToons">
+		<label>syToons</label>
+		<description>...</description>
+		<attribute name="engine" type="maya.enum">
+			<label>Engine</label>
+			<description></description>
+		</attribute>
+		<attribute name="casting_light" type="maya.bool">
+			<label>Casting Light Only</label>
+			<description></description>
+		</attribute>
+		<attribute name="casting_texture" type="maya.bool">
+			<label>Casting Texture Only</label>
+			<description></description>
+		</attribute>
+		<attribute name="color_major" type="maya.float3">
+			<label>Major Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="color_shadow" type="maya.float3">
+			<label>Shadow Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="color_mask" type="maya.float3">
+			<label>Mask Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="color_extra" type="maya.float3">
+			<label>Extra Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="diffuse_color" type="maya.float3">
+			<label>Diffuse Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="specular_color" type="maya.float3">
+			<label>Specular Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="roughness" type="maya.float">
+			<label>Roughness</label>
+			<description></description>
+		</attribute>
+		<attribute name="aov_color_major" type="maya.float3">
+			<label>Aov Color Major</label>
+			<description></description>
+		</attribute>
+		<attribute name="aov_color_shadow" type="maya.float3">
+			<label>Aov Color Shadow</label>
+			<description></description>
+		</attribute>
+		<attribute name="aov_color_mask" type="maya.float3">
+			<label>Aov Color Mask</label>
+			<description></description>
+		</attribute>
+		<attribute name="aov_color_extra" type="maya.float3">
+			<label>Aov Color Extra</label>
+			<description></description>
+		</attribute>
+		<attribute name="aov_diffuse_color" type="maya.float3">
+			<label>Aov Diffuse Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="aov_specular_color" type="maya.float3">
+			<label>Aov Specular Color</label>
+			<description></description>
+		</attribute>
 
+	</template>
+		<view name="Lookdev" template="AEsyToons">
+			<property name="engine"/>
+			<group name="TextureShader">
+				<label>Texture Shader</label>
+			<property name="color_major"/>
+			<property name="color_shadow"/>
+			<property name="color_mask"/>
+			<property name="color_extra"/>
+			<property name="casting_texture"/>
+			</group>
+			<group name="LightingShader">
+				<label>Lighting Shader</label>
+			<property name="diffuse_color"/>
+			<property name="specular_color"/>
+			<property name="roughness"/>
+			<property name="casting_light"/>
+			</group>
+			<group name="AOVs">
+				<label>AOVs</label>
+			<property name="aov_color_major"/>
+			<property name="aov_color_shadow"/>
+			<property name="aov_color_mask"/>
+			<property name="aov_color_extra"/>
+			<property name="aov_diffuse_color"/>
+			<property name="aov_specular_color"/>
+			</group>
+		</view>
+</templates>

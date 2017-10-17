@@ -56,10 +56,10 @@ enum Params {
 
 node_parameters
 {
-	AiParameterEnum("Engine", S_SCANLINE, engine_params);
+	AiParameterEnum("engine", S_SCANLINE, engine_params);
 	AiParameterRGB("color_major", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("color_shadow", 0.0f, 0.0f, 0.0f);
-	AiParameterFLT("color_mask", 0.0f);
+	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
 	AiParameterRGB("color_extra", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("diffuse_color", 0.7f, 0.7f, 0.7f);
 	AiParameterRGB("specular_color", 1.0f, 1.0f, 1.0f);

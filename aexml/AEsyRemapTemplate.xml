@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<templates>
 	<template name="AEsyRemap">
-		<label>alRemapColor</label>
+		<label>syRemap</label>
 		<description>Use controls such as gamma, saturation and contrast to tweak the color values in your network. Operations are applied in the order they appear in the shader.</description>
 		<attribute name="input" type="maya.float3">
 			<label>Input</label>
