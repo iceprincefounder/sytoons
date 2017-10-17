@@ -15,6 +15,7 @@
 #include <ai.h>
 #include <cstring>
 
+#include <shader_utils.h>
 
 AI_SHADER_NODE_EXPORT_METHODS(syToonsMethods);
 
@@ -33,6 +34,10 @@ const char* engine_params[] =
 
 enum Params {
 	p_engine,
+	p_color_major,
+	p_color_shadow,
+	p_color_mask,
+	p_color_extra,
 	p_Ka_color,
 	p_Kd_color,
 	p_Ks_color,
@@ -43,6 +48,10 @@ enum Params {
 node_parameters
 {
 	AiParameterEnum("Engine", S_SCANLINE, engine_params);
+	AiParameterRGB("color_major", 1.0f, 1.0f, 1.0f);
+	AiParameterRGB("color_shadow", 0.0f, 0.0f, 0.0f);
+	AiParameterFLT("color_mask", 0.0f);
+	AiParameterRGB("color_extra", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("Ka_color", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("Kd_color", 0.7f, 0.7f, 0.7f);
 	AiParameterRGB("Ks_color", 0.7f, 0.7f, 0.7f);
@@ -66,6 +75,14 @@ shader_evaluate
 {
 	// we provide two shading engine,traditional scanline and GI engine raytrace.
 	int shading_engine = AiShaderEvalParamInt(p_engine);
+	
+	AtColor color_major = AiShaderEvalParamRGB(p_color_major);
+	AtColor color_shadow = AiShaderEvalParamRGB(p_color_shadow);
+	float color_mask = AiShaderEvalParamFlt(p_color_mask);
+	AtColor color_extra = AiShaderEvalParamRGB(p_color_extra);
+	//if (color_major != AI_RGB_BLACK)
+	//	AiAOVSetRGB(sg, data->aovs_custom[k_diffuse_color].c_str(), color_major);
+
 	// do shading
 	AtColor lighting_result = AI_RGB_BLACK;
 	switch (shading_engine)
@@ -134,5 +151,7 @@ shader_evaluate
 			break;
 			}
 	}
-	sg->out.RGB = lighting_result;
+	//sg->out.RGB = color_major + color_secondary*color_shadow;
+	AtColor texture_result = lerp(color_shadow,color_major,color_mask) + color_extra;
+	sg->out.RGB = texture_result;
 }
