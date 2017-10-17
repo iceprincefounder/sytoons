@@ -1,0 +1,24 @@
+[node syToons]
+	desc STRING ""
+	maya.name STRING "syToons"
+	maya.classification STRING "shader/sy3t"
+	maya.id INT 0x17000001
+	maya.output_name STRING "outColor"
+	maya.output_shortname STRING "out"
+
+[node syRamp]
+	desc STRING ""
+	maya.name STRING "syRamp"
+	maya.classification STRING "shader/sy3t"
+	maya.id INT 0x17000002
+	maya.output_name STRING "outColor"
+	maya.output_shortname STRING "out"
+
+[node syRemap]
+	desc STRING ""
+	maya.name STRING "syRemap"
+	maya.classification STRING "shader/sy3t"
+	maya.id INT 0x17000003
+	maya.output_name STRING "outColor"
+	maya.output_shortname STRING "out"
+
