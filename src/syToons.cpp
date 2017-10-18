@@ -58,15 +58,15 @@ node_parameters
 {
 	AiParameterEnum("engine", S_SCANLINE, engine_params);
 	AiParameterRGB("color_major", 0.7f, 0.7f, 0.7f);
-	AiParameterRGB("color_shadow", 0.7f, 0.7f, 0.7f);
-	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
+	AiParameterRGB("color_shadow", 0.0f, 0.0f, 0.0f);
+	AiParameterRGB("color_mask", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("color_extra", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("diffuse_color", 0.7f, 0.7f, 0.7f);
-	AiParameterRGB("specular_color", 1.0f, 1.0f, 1.0f);
+	AiParameterRGB("specular_color", 0.7f, 0.7f, 0.7f);
 	AiParameterFLT("roughness", 0.2f);
 	//AiParameterFLT("specbalance", 0.1f); ////hide parameter specbalance until we need ray-tracing render
-	AiParameterBool("casting_light", false);
-	AiParameterBool("casting_texture", true);
+	AiParameterBool("casting_light", true);
+	AiParameterBool("casting_texture", false);
 
 	AiParameterStr("aov_sytoons_beauty", "aov_sytoons_beauty");
 	AiParameterStr("aov_color_major", "aov_color_major");
