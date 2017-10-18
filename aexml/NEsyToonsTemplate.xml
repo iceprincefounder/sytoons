@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<templates>
-	<template name="NEsyRemap">
+	<template name="NEsyToons">
 		<attribute name="outColor" type="maya.float3">
 		<label>Out Color</label>
 </attribute>
-		<attribute name="input" type="maya.float3">
-			<label>Input</label>
+		<attribute name="colorMajor" type="maya.float3">
+			<label>Major Color</label>
 		</attribute>
-		<attribute name="mask" type="maya.float">
-			<label>Mask</label>
+		<attribute name="colorShadow" type="maya.float3">
+			<label>Shadow Color</label>
+		</attribute>
+		<attribute name="colorMask" type="maya.float3">
+			<label>Mask Color</label>
+		</attribute>
+		<attribute name="colorExtra" type="maya.float3">
+			<label>Extra Color</label>
+		</attribute>
+		<attribute name="diffuseColor" type="maya.float3">
+			<label>Diffuse Color</label>
+		</attribute>
+		<attribute name="specularColor" type="maya.float3">
+			<label>Specular Color</label>
+		</attribute>
+		<attribute name="roughness" type="maya.float">
+			<label>Roughness</label>
 		</attribute>
 	</template>
-		<view name="NEDefault" template="NEsyRemap">
+		<view name="NEDefault" template="NEsyToons">
 		<property name="outColor" />
-		<property name="input" />
-		<property name="mask" />
+		<property name="colorMajor" />
+		<property name="colorShadow" />
+		<property name="colorMask" />
+		<property name="colorExtra" />
+		<property name="diffuseColor" />
+		<property name="specularColor" />
+		<property name="roughness" />
 		</view>
 </templates>

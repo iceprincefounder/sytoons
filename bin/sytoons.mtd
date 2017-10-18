@@ -1,15 +1,43 @@
 [node syToons]
 	desc STRING ""
 	maya.name STRING "syToons"
-	maya.classification STRING "shader/sy3t"
+	maya.classification STRING "shader/surface"
 	maya.id INT 0x17000001
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
+	[attr aov_sytoons_beauty]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "aov_sytoons_beauty"
+	[attr aov_color_major]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "aov_color_major"
+	[attr aov_color_shadow]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "aov_color_shadow"
+	[attr aov_color_mask]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "aov_color_mask"
+	[attr aov_color_extra]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "aov_color_extra"
+	[attr aov_diffuse_color]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "aov_diffuse_color"
+	[attr aov_specular_color]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "aov_specular_color"
 
 [node syRamp]
 	desc STRING ""
 	maya.name STRING "syRamp"
-	maya.classification STRING "shader/sy3t"
+	maya.classification STRING "utility/color"
 	maya.id INT 0x17000002
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
@@ -17,7 +45,7 @@
 [node syRemap]
 	desc STRING ""
 	maya.name STRING "syRemap"
-	maya.classification STRING "shader/sy3t"
+	maya.classification STRING "utility/color"
 	maya.id INT 0x17000003
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"

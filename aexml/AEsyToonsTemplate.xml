@@ -43,6 +43,10 @@
 			<label>Roughness</label>
 			<description></description>
 		</attribute>
+		<attribute name="aov_sytoons_beauty" type="maya.float3">
+			<label>Aov syToons Beauty</label>
+			<description></description>
+		</attribute>
 		<attribute name="aov_color_major" type="maya.float3">
 			<label>Aov Color Major</label>
 			<description></description>
@@ -88,6 +92,7 @@
 			</group>
 			<group name="AOVs">
 				<label>AOVs</label>
+			<property name="aov_sytoons_beauty"/>
 			<property name="aov_color_major"/>
 			<property name="aov_color_shadow"/>
 			<property name="aov_color_mask"/>

@@ -45,7 +45,7 @@ enum Params {
 	//p_specbalance //hide parameter specbalance until we need ray-tracing render
 	p_casting_light,
 	p_casting_texture,
-	
+	p_aov_sytoons_beauty,
 	p_aov_color_major,
 	p_aov_color_shadow,
 	p_aov_color_mask,
@@ -68,12 +68,13 @@ node_parameters
 	AiParameterBool("casting_light", true);
 	AiParameterBool("casting_texture", true);
 
-	AiParameterStr("aov_color_major", "color_major");
-	AiParameterStr("aov_color_shadow", "color_shadow");
-	AiParameterStr("aov_color_mask", "color_mask");
-	AiParameterStr("aov_color_extra", "color_extra");
-	AiParameterStr("aov_diffuse_color", "diffuse_color");
-	AiParameterStr("aov_specular_color", "specular_color");
+	AiParameterStr("aov_sytoons_beauty", "aov_sytoons_beauty");
+	AiParameterStr("aov_color_major", "aov_color_major");
+	AiParameterStr("aov_color_shadow", "aov_color_shadow");
+	AiParameterStr("aov_color_mask", "aov_color_mask");
+	AiParameterStr("aov_color_extra", "aov_color_extra");
+	AiParameterStr("aov_diffuse_color", "aov_diffuse_color");
+	AiParameterStr("aov_specular_color", "aov_specular_color");
 }
 
 node_initialize
