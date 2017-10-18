@@ -21,6 +21,7 @@
 #ifndef REGISTER_AOVS_CUSTOM
 #define REGISTER_AOVS_CUSTOM \
 data->aovs_custom.clear(); \
+data->aovs_custom.push_back(params[p_aov_sytoons_beauty].STR); \
 data->aovs_custom.push_back(params[p_aov_color_major].STR); \
 data->aovs_custom.push_back(params[p_aov_color_shadow].STR); \
 data->aovs_custom.push_back(params[p_aov_color_mask].STR); \
@@ -34,12 +35,13 @@ for (size_t i=0; i < data->aovs_custom.size(); ++i) \
 
 enum AovIndices
 {
-	k_color_major = 0,
-	k_color_shadow,
-	k_color_mask,
-	k_color_extra,
-	k_diffuse_color,
-	k_specular_color
+	k_aov_sytoons_beauty = 0,
+	k_aov_color_major,
+	k_aov_color_shadow,
+	k_aov_color_mask,
+	k_aov_color_extra,
+	k_aov_diffuse_color,
+	k_aov_specular_color
 };
 
 

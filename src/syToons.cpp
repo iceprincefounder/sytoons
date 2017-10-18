@@ -57,15 +57,15 @@ enum Params {
 node_parameters
 {
 	AiParameterEnum("engine", S_SCANLINE, engine_params);
-	AiParameterRGB("color_major", 1.0f, 1.0f, 1.0f);
-	AiParameterRGB("color_shadow", 0.0f, 0.0f, 0.0f);
+	AiParameterRGB("color_major", 0.7f, 0.7f, 0.7f);
+	AiParameterRGB("color_shadow", 0.7f, 0.0f, 0.0f);
 	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
 	AiParameterRGB("color_extra", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("diffuse_color", 0.7f, 0.7f, 0.7f);
 	AiParameterRGB("specular_color", 1.0f, 1.0f, 1.0f);
 	AiParameterFLT("roughness", 0.2f);
 	//AiParameterFLT("specbalance", 0.1f); ////hide parameter specbalance until we need ray-tracing render
-	AiParameterBool("casting_light", true);
+	AiParameterBool("casting_light", false);
 	AiParameterBool("casting_texture", true);
 
 	AiParameterStr("aov_sytoons_beauty", "aov_sytoons_beauty");
@@ -105,7 +105,7 @@ shader_evaluate
 	ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
 	// we provide two shading engine,traditional scanline and GI engine raytrace.
 	int shading_engine = AiShaderEvalParamInt(p_engine);
-	
+	AtColor result = AI_RGB_BLACK;
 	AtColor color_major = AiShaderEvalParamRGB(p_color_major);
 	AtColor color_shadow = AiShaderEvalParamRGB(p_color_shadow);
 	AtColor color_mask = AiShaderEvalParamRGB(p_color_mask);
@@ -114,10 +114,13 @@ shader_evaluate
 	bool casting_texture = AiShaderEvalParamBool(p_casting_texture);
 
 	// Set flat shader AOVs
-	AiAOVSetRGB(sg, data->aovs_custom[k_color_major].c_str(), color_major);
-	AiAOVSetRGB(sg, data->aovs_custom[k_color_shadow].c_str(), color_shadow);
-	AiAOVSetRGB(sg, data->aovs_custom[k_color_mask].c_str(), color_mask);
-	AiAOVSetRGB(sg, data->aovs_custom[k_color_extra].c_str(), color_extra);
+	AiAOVSetRGB(sg, data->aovs_custom[k_aov_color_major].c_str(), color_major);
+	AiAOVSetRGB(sg, data->aovs_custom[k_aov_color_shadow].c_str(), color_shadow);
+	AiAOVSetRGB(sg, data->aovs_custom[k_aov_color_mask].c_str(), color_mask);
+	AiAOVSetRGB(sg, data->aovs_custom[k_aov_color_extra].c_str(), color_extra);
+
+	AtColor texture_result = lerp(color_shadow,color_major,color_mask.r) + color_extra;
+
 	// do shading
 	AtColor lighting_result = AI_RGB_BLACK;
 	switch (shading_engine)
@@ -146,12 +149,13 @@ shader_evaluate
 
 			// add diffuse and specular into custom AOVs
 			if (LaD != AI_RGB_BLACK)
-				AiAOVSetRGB(sg, data->aovs_custom[k_diffuse_color].c_str(), LaD);
+				AiAOVSetRGB(sg, data->aovs_custom[k_aov_diffuse_color].c_str(), LaD);
 			if (LaS != AI_RGB_BLACK)
-				AiAOVSetRGB(sg, data->aovs_custom[k_specular_color].c_str(), LaS);
+				AiAOVSetRGB(sg, data->aovs_custom[k_aov_specular_color].c_str(), LaS);
 
 			// color = accumulated light + ambient
-			lighting_result = LaD + LaS;
+			//lighting_result = LaD + LaS;
+			lighting_result = LaD;// from this time,we don`t provide specular.
 			break;   	   			
 		}
 		case S_RAYTRACE:
@@ -185,9 +189,9 @@ shader_evaluate
 
 			// add direct diffuse and direct specular into custom AOVs
 			if (Dda != AI_RGB_BLACK)
-				AiAOVSetRGB(sg, data->aovs_custom[k_diffuse_color].c_str(), Dda);
+				AiAOVSetRGB(sg, data->aovs_custom[k_aov_diffuse_color].c_str(), Dda);
 			if (Dsa != AI_RGB_BLACK)
-				AiAOVSetRGB(sg, data->aovs_custom[k_specular_color].c_str(), Dsa);
+				AiAOVSetRGB(sg, data->aovs_custom[k_aov_specular_color].c_str(), Dsa);
 
 			// add up indirect and direct contributions
 			lighting_result = Kd * (Dda + IDd) + Ks * (Dsa + IDs);
@@ -199,10 +203,10 @@ shader_evaluate
 			break;
 			}
 	}
-	//sg->out.RGB = color_major + color_secondary*color_shadow;
-	AtColor texture_result = lerp(color_shadow,color_major,color_mask.r) + color_extra;
+	result = texture_result;
 	if(casting_light)
 		sg->out.RGB = lighting_result;
 	if(casting_texture)
 		sg->out.RGB = texture_result;
+	AiAOVSetRGB(sg, data->aovs_custom[k_aov_sytoons_beauty].c_str(), result);
 }
