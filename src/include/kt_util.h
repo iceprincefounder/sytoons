@@ -28,7 +28,7 @@ data->aovs_custom.push_back(params[p_aov_color_mask].STR); \
 data->aovs_custom.push_back(params[p_aov_color_extra].STR); \
 data->aovs_custom.push_back(params[p_aov_diffuse_color].STR); \
 data->aovs_custom.push_back(params[p_aov_specular_color].STR); \
-assert(data->aovs_custom.size() == 6 && "NUM_AOVs does not match size of aovs array!"); \
+assert(data->aovs_custom.size() == 7 && "NUM_AOVs does not match size of aovs array!"); \
 for (size_t i=0; i < data->aovs_custom.size(); ++i) \
 	AiAOVRegister(data->aovs_custom[i].c_str(), AI_TYPE_RGB, AI_AOV_BLEND_OPACITY);
 #endif

@@ -58,7 +58,7 @@ node_parameters
 {
 	AiParameterEnum("engine", S_SCANLINE, engine_params);
 	AiParameterRGB("color_major", 0.7f, 0.7f, 0.7f);
-	AiParameterRGB("color_shadow", 0.7f, 0.0f, 0.0f);
+	AiParameterRGB("color_shadow", 0.7f, 0.7f, 0.7f);
 	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
 	AiParameterRGB("color_extra", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("diffuse_color", 0.7f, 0.7f, 0.7f);
@@ -203,10 +203,10 @@ shader_evaluate
 			break;
 			}
 	}
-	result = texture_result;
 	if(casting_light)
-		sg->out.RGB = lighting_result;
+		result = lighting_result;
 	if(casting_texture)
-		sg->out.RGB = texture_result;
+		result = texture_result;
 	AiAOVSetRGB(sg, data->aovs_custom[k_aov_sytoons_beauty].c_str(), result);
+	sg->out.RGB = result;
 }
