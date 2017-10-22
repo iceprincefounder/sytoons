@@ -1,19 +1,14 @@
 # sytoons
 Arnold Cartoons Shaders At SY3T
 
+# Supported Platforms
+
+Windows 7 or newer;Centos 6.7 or newer;
+
+Arnold 4.2.11.3 or newer(not support Arnold 5 yeti)
+
+
 # How to Install
-
-## linux
-
-set those environment variable in shell script
-
-```
-export MTOA_TEMPLATES_PATH=/path/to/sytoons/ae:$MTOA_TEMPLATES_PATH
-
-export MAYA_CUSTOM_TEMPLATE_PATH=/path/to/sytoons/aexml:$MAYA_CUSTOM_TEMPLATE_PATH
-
-export ARNOLD_PLUGIN_PATH=/path/to/sytoons/bin:$ARNOLD_PLUGIN_PATH
-```
 
 ## windows
 
@@ -35,4 +30,39 @@ ARNOLD_PLUGIN_PATH=path\to\sytoons\bin
 MTOA_TEMPLATES_PATH=path\to\sytoons\ae
 MAYA_CUSTOM_TEMPLATE_PATH=path\to\sytoons\aexml
 
+```
+
+## linux
+
+set those environment variable in shell script
+
+```
+export MTOA_TEMPLATES_PATH=/path/to/sytoons/ae:$MTOA_TEMPLATES_PATH
+
+export MAYA_CUSTOM_TEMPLATE_PATH=/path/to/sytoons/aexml:$MAYA_CUSTOM_TEMPLATE_PATH
+
+export ARNOLD_PLUGIN_PATH=/path/to/sytoons/bin:$ARNOLD_PLUGIN_PATH
+```
+
+
+# How to Compile
+
+## windows
+
+set ARNOLD_PATH in Compile.bat
+
+set your Visual Studio 14.0 vcvarsall.bat file path
+
+```
+cd /path/to/sytoons
+Compile.bat
+```
+
+## linux
+
+set ARNOLD_PATH in Makefile file
+
+```
+cd /path/to/sytoons
+make 
 ```
