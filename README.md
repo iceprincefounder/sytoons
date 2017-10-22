@@ -66,3 +66,7 @@ set ARNOLD_PATH in Makefile file
 cd /path/to/sytoons
 make 
 ```
+
+# For details,See wiki
+
+https://github.com/iceprincefounder/sytoons/wiki
