@@ -3,7 +3,8 @@ Arnold Cartoons Shaders At SY3T
 
 # Supported Platforms
 
-sytoons [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed) 
+linux   [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed)        windows   [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed) 
+
 
 Windows 7 or newer;Centos 6.7 or newer;
 
