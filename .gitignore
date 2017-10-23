@@ -7,6 +7,8 @@
 *.o
 *.os
 *.obj
+*.exp
+
 
 # Precompiled Headers
 *.gch
@@ -34,3 +36,6 @@
 
 # Python
 *.pyc
+
+# environment.txt
+environment.txt
