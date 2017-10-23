@@ -3,12 +3,16 @@ Arnold Cartoons Shaders At SY3T
 
 # Supported Platforms
 
+----
+
 linux   [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed)        windows   [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed) 
 
+----
 
 Windows 7 or newer;Centos 6.7 or newer;
 
 Arnold 4.2.11.3 or newer(not support Arnold 5 yeti)
+
 
 
 # How to Install
