@@ -54,3 +54,237 @@ struct ShaderData
     std::vector<std::string> aovs_custom;
 };
 
+enum RampInterpolationType
+{
+   RIT_NONE = 0,
+   RIT_LINEAR,
+   RIT_EXP_UP,
+   RIT_EXP_DOWN,
+   RIT_SMOOTH,
+   RIT_BUMP,
+   RIT_SPIKE
+};
+
+#define LUT_SIZE 32
+
+bool getMayaRampArrays(AtNode* node, const char* paramName, AtArray** positions, AtArray** colors, RampInterpolationType* interp)
+{
+    *positions = NULL;
+    *colors = NULL;
+    if (AiNodeIsLinked(node, paramName))
+    {
+        AtNode* cn = AiNodeGetLink(node, paramName);
+        const AtNodeEntry* cne = AiNodeGetNodeEntry(cn);
+        if (!strcmp(AiNodeEntryGetName(cne), "MayaRamp"))
+        {
+          *positions = AiNodeGetArray(cn, "position");
+          *colors = AiNodeGetArray(cn, "color");
+          *interp = (RampInterpolationType)AiNodeGetInt(cn, "interpolation");
+          return true;
+        }
+        else
+        {
+            AiMsgWarning("[syToons] %s is connected but connection is not a MayaRamp", paramName);
+            return false;
+        }
+    }
+}
+
+bool SortFloatIndexArray(AtArray *a, unsigned int *shuffle)
+{
+   bool modified = false;
+
+   if (a && shuffle && a->nelements > 0)
+   {
+      float p0, p1;
+      int tmp;
+
+      bool swapped = true;
+      AtUInt32 n = a->nelements;
+
+      for (AtUInt32 i = 0; (i < n); ++i)
+      {
+         shuffle[i] = i;
+      }
+
+      while (swapped)
+      {
+         swapped = false;
+         n -= 1;
+         for (AtUInt32 i = 0; (i < n); ++i)
+         {
+            p0 = AiArrayGetFlt(a, shuffle[i]);
+            p1 = AiArrayGetFlt(a, shuffle[i + 1]);
+            if (p0 > p1)
+            {
+               swapped = true;
+               modified = true;
+
+               tmp = shuffle[i];
+               shuffle[i] = shuffle[i + 1];
+               shuffle[i + 1] = tmp;
+            }
+         }
+      }
+   }
+
+   return modified;
+}
+
+// This one is defined for the RampT template function to work properly
+float RampLuminance(float v)
+{
+   return v;
+}
+
+float RampLuminance(const AtRGB &color)
+{
+   return (0.3f * color.r + 0.3f * color.g + 0.3f * color.b);
+}
+
+float Mix(float a, float b, float t)
+{
+   return (a + t * (b - a));
+}
+
+AtRGB Mix(const AtRGB &c0, const AtRGB &c1, float t)
+{
+   return (c0 + t * (c1 - c0));
+}
+
+AtRGBA Mix(const AtRGBA &c0, const AtRGBA &c1, float t)
+{
+   AtRGBA rv;
+   rv.r = c0.r + t * (c1.r - c0.r);
+   rv.g = c0.g + t * (c1.g - c0.g);
+   rv.b = c0.b + t * (c1.b - c0.b);
+   rv.a = c0.a + t * (c1.a - c0.a);
+   return rv;
+}
+
+
+template <typename ValType>
+void RampT(AtArray *p, AtArray *c, float t, RampInterpolationType it, ValType &result, ValType (*getv)(AtArray*, unsigned int), unsigned int *shuffle)
+{
+   unsigned int inext = p->nelements;
+
+   for (unsigned int i = 0; (i < p->nelements); ++i)
+   {
+      if (t < AiArrayGetFlt(p, shuffle[i]))
+      {
+         inext = i;
+         break;
+      }
+   }
+
+   if (inext >= p->nelements)
+   {
+      result = getv(c, shuffle[p->nelements - 1]);
+      return;
+   }
+
+   if (inext == 0)
+   {
+      result = getv(c, shuffle[0]);
+      return;
+   }
+
+   unsigned int icur = inext - 1;
+   float tcur = AiArrayGetFlt(p, shuffle[icur]);
+   float tnext = AiArrayGetFlt(p, shuffle[inext]);
+   ValType ccur = getv(c, shuffle[icur]);
+   ValType cnext = getv(c, shuffle[inext]);
+   float u = (t - tcur) / (tnext - tcur);
+
+   switch (it)
+   {
+   case RIT_LINEAR:
+      // u = u;
+      break;
+   case RIT_EXP_UP:
+      u = u * u;
+      break;
+   case RIT_EXP_DOWN:
+      u = 1.0f - (1.0f - u) * (1.0f - u);
+      break;
+   case RIT_SMOOTH:
+      u = 0.5f * (static_cast<float>(cos((u + 1.0f) * AI_PI)) + 1.0f);
+      break;
+   case RIT_BUMP:
+      {
+         float lcur = RampLuminance(ccur);
+         float lnext = RampLuminance(cnext);
+         if (lcur < lnext)
+         {
+            u = sin(u * static_cast<float>(AI_PI) / 2.0f);
+         }
+         else
+         {
+            u = sin((u - 1.0f) * static_cast<float>(AI_PI) / 2.0f) + 1.0f;
+         }
+      }
+      break;
+   case RIT_SPIKE:
+      {
+         float lcur = RampLuminance(ccur);
+         float lnext = RampLuminance(cnext);
+         if (lcur > lnext)
+         {
+            u = sin(u * static_cast<float>(AI_PI) / 2.0f);
+         }
+         else
+         {
+            u = sin((u - 1.0f) * static_cast<float>(AI_PI) / 2.0f) + 1.0f;
+         }
+      }
+      break;
+   case RIT_NONE:
+   default:
+      u = 0.0f;
+   }
+
+   result = Mix(ccur, cnext, u);
+}
+
+float _GetArrayFlt(AtArray *a, unsigned int i)
+{
+   return AiArrayGetFlt(a, i);
+}
+
+AtRGB _GetArrayRGB(AtArray *a, unsigned int i)
+{
+   return AiArrayGetRGB(a, i);
+}
+
+void Ramp(AtArray *p, AtArray *v, float t, RampInterpolationType it, float &out, unsigned int *shuffle)
+{
+   RampT(p, v, t, it, out, _GetArrayFlt, shuffle);
+}
+
+void Ramp(AtArray *p, AtArray *v, float t, RampInterpolationType it, AtRGB &out, unsigned int *shuffle)
+{
+   RampT(p, v, t, it, out, _GetArrayRGB, shuffle);
+}
+
+void generateRampLUT(AtArray* positions, AtArray* colors, RampInterpolationType interp, AtRGB* lut)
+{
+    unsigned int* shuffle = new unsigned int[positions->nelements];
+    SortFloatIndexArray(positions, shuffle);
+    for (int i=0; i < LUT_SIZE; ++i)
+    {
+        float t = float(i)/float(LUT_SIZE-1);
+        Ramp(positions, colors, t, interp, lut[i], shuffle);
+    }
+
+    delete[] shuffle;
+}
+
+AtRGB rampLUTLookup(AtRGB* lut, float t)
+{
+    float tt = clamp(t*(LUT_SIZE-1), 0.0f, float(LUT_SIZE-1));
+    int i = int(tt);
+    int in = std::min(i+1, LUT_SIZE-1);
+    tt -= float(i);
+    return lerp(lut[i], lut[in], tt);
+}
+
