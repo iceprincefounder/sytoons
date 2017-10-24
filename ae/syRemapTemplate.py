@@ -1,7 +1,7 @@
 import pymel.core as pm
-from alShaders import *
+from syShaders import *
 
-class AEsyRemapTemplate(alShadersTemplate):
+class AEsyRemapTemplate(syShadersTemplate):
 	controls = {}
 	params = {}
 	def setup(self):
