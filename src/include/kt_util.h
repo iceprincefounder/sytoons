@@ -18,7 +18,6 @@
 #include <math.h>
 #include <cassert>
 
-#include <my_util.h>
 
 #ifndef REGISTER_AOVS_CUSTOM
 #define REGISTER_AOVS_CUSTOM \
@@ -55,25 +54,3 @@ struct ShaderData
     std::vector<std::string> aovs_custom;
 };
 
-
-inline void getMayaRampArrays(AtNode* node, const char* paramName, AtArray** positions, AtArray** colors, RampInterpolationType* interp)
-{
-    *positions = NULL;
-    *colors = NULL;
-    if (AiNodeIsLinked(node, paramName))
-    {
-        AtNode* cn = AiNodeGetLink(node, paramName);
-        const AtNodeEntry* cne = AiNodeGetNodeEntry(cn);
-        if (!strcmp(AiNodeEntryGetName(cne), "MayaRamp"))
-        {
-            *positions = AiNodeGetArray(cn, "position");
-            *colors = AiNodeGetArray(cn, "color");
-            *interp = (RampInterpolationType)AiNodeGetInt(cn, "interpolation");
-
-        }
-        else
-        {
-            AiMsgWarning("[syToons] %s is connected but connection is not a MayaRamp", paramName);
-        }
-    }
-}

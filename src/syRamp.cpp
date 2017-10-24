@@ -20,6 +20,8 @@
 
 #include <my_util.h>
 
+using namespace my;
+
 AI_SHADER_NODE_EXPORT_METHODS(syRampMethods);
 
 
