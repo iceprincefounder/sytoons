@@ -24,23 +24,23 @@
 			<description></description>
 		</attribute>
 		<attribute name="lambert_color" type="maya.float3">
-			<label>Diffuse Color</label>
+			<label>Lambert Color</label>
 			<description></description>
 		</attribute>
 		<attribute name="shadow_ramp" type="maya.float3">
-			<label>Specular Color</label>
+			<label>Shadow Ramp</label>
 			<description></description>
 		</attribute>
 		<attribute name="shadow_position" type="maya.float">
-			<label>Roughness</label>
+			<label>Shadow Position</label>
 			<description></description>
 		</attribute>
 		<attribute name="casting_light" type="maya.bool">
-			<label>Casting Light Only</label>
+			<label>Casting Light</label>
 			<description></description>
 		</attribute>
 		<attribute name="casting_occlusion" type="maya.bool">
-			<label>Casting Texture Only</label>
+			<label>Casting Occlusion</label>
 			<description></description>
 		</attribute>
 		<attribute name="aov_sytoons_beauty" type="maya.float3">
@@ -75,21 +75,24 @@
 	</template>
 		<view name="Lookdev" template="AEsyToons">
 			<property name="engine"/>
-			<group name="TextureShader">
-				<label>Texture Shader</label>
+			<group name="TextureShading">
+				<label>Texture Shading</label>
 			<property name="color_major"/>
 			<property name="color_shadow"/>
 			<property name="color_mask"/>
 			<property name="color_extra"/>
 			</group>
-			<group name="LightingShader">
-				<label>Lighting Shader</label>
-			<property name="diffuse_color"/>
-			<property name="specular_color"/>
-			<property name="roughness"/>
+			<group name="LightShading">
+				<label>Light Shading</label>
+			<property name="lambert_color"/>
+			<property name="shadow_ramp"/>
+			<property name="shadow_position"/>
 			</group>
+			<group name="Optimization">
+				<label>Light Shading</label>
 			<property name="casting_light"/>
 			<property name="casting_occlusion"/>
+			</group>
 			<group name="AOVs">
 				<label>AOVs</label>
 			<property name="aov_sytoons_beauty"/>

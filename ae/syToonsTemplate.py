@@ -40,13 +40,15 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.endLayout() 
 
 		self.beginLayout("Light Shading", collapse=False)
-		self.addControl("lambert_color", label="Diffuse Color", annotation="")
-		self.addControl("shadow_ramp", label="Specular Color", annotation="")
-		self.addControl("shadow_position", label="Roughness", annotation="")
+		self.addControl("lambert_color", label="Lambert Color", annotation="")
+		self.addControl("shadow_ramp", label="Shadow Ramp", annotation="")
+		self.addCustomFlt("shadow_position")
 		self.endLayout()
 
+		self.beginLayout("Optimization", collapse=False)
 		self.addControl("casting_light", label="Casting Light", annotation="")
 		self.addControl("casting_occlusion", label="Casting Occlusion", annotation="")
+		self.endLayout()
 
 		self.beginLayout("AOVs", collapse=True)
 		self.addControl("aov_sytoons_beauty", label="Aov syToons Beauty", annotation="")
