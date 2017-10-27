@@ -16,14 +16,14 @@
 		<attribute name="colorExtra" type="maya.float3">
 			<label>Extra Color</label>
 		</attribute>
-		<attribute name="diffuseColor" type="maya.float3">
-			<label>Diffuse Color</label>
+		<attribute name="lambertColor" type="maya.float3">
+			<label>Lambert Color</label>
 		</attribute>
-		<attribute name="specularColor" type="maya.float3">
-			<label>Specular Color</label>
+		<attribute name="shadowRamp" type="maya.float3">
+			<label>Shadow Ramp</label>
 		</attribute>
-		<attribute name="roughness" type="maya.float">
-			<label>Roughness</label>
+		<attribute name="shadowPosition" type="maya.float">
+			<label>Shadow Position</label>
 		</attribute>
 	</template>
 		<view name="NEDefault" template="NEsyToons">
@@ -32,8 +32,8 @@
 		<property name="colorShadow" />
 		<property name="colorMask" />
 		<property name="colorExtra" />
-		<property name="diffuseColor" />
-		<property name="specularColor" />
-		<property name="roughness" />
+		<property name="lambertColor" />
+		<property name="shadowRamp" />
+		<property name="shadowPosition" />
 		</view>
 </templates>

@@ -17,7 +17,7 @@
     <param label="Shadow Position" name="shadow_position" slider="True"/>
   </page>
   <param label="Casting Light" name="casting_light" widget="checkBox"/>
-  <param label="Casting Texture" name="casting_texture" widget="checkBox"/>
+  <param label="Casting Occlusion" name="casting_occlusion" widget="checkBox"/>
   <page name="AOVs" open="false">
     <param label="aov_sytoons_beauty" name="aov_sytoons_beauty"/>
     <param label="aov_color_major" name="aov_color_major"/>

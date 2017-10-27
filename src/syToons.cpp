@@ -45,7 +45,7 @@ enum Params {
 	p_shadow_ramp,
 	p_shadow_position,
 	p_casting_light,
-	p_casting_texture,
+	p_casting_occlusion,
 	p_aov_sytoons_beauty,
 	p_aov_color_major,
 	p_aov_color_shadow,
@@ -65,8 +65,8 @@ node_parameters
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("shadow_ramp", 0.0f, 0.0f, 0.0f);
 	AiParameterFLT("shadow_position", 0.1f);
-	AiParameterBool("casting_light", true);
-	AiParameterBool("casting_texture", false);
+	AiParameterBool("casting_light", false);
+	AiParameterBool("casting_occlusion", false);
 
 	AiParameterStr("aov_sytoons_beauty", "aov_sytoons_beauty");
 	AiParameterStr("aov_color_major", "aov_color_major");
@@ -111,7 +111,7 @@ shader_evaluate
 	AtColor color_mask = AiShaderEvalParamRGB(p_color_mask);
 	AtColor color_extra = AiShaderEvalParamRGB(p_color_extra);
 	bool casting_light = AiShaderEvalParamBool(p_casting_light);
-	bool casting_texture = AiShaderEvalParamBool(p_casting_texture);
+	bool casting_occlusion = AiShaderEvalParamBool(p_casting_occlusion);
 
 	// Set flat shader AOVs
 	AiAOVSetRGB(sg, data->aovs_custom[k_aov_color_major].c_str(), color_major);
@@ -123,82 +123,89 @@ shader_evaluate
 
 	// do shading
 	AtColor diffuse_raw = AI_RGB_BLACK;
-	AtColor lighting_result = AI_RGB_BLACK;
-	switch (shading_engine)
+	AtColor lighting_result = AI_RGB_WHITE;
+	if(casting_light)
 	{
-		case S_SCANLINE:
+		switch (shading_engine)
 		{
-			AtColor Kd = AiShaderEvalParamRGB(p_lambert_color);
-			AtColor Ks = AI_RGB_WHITE;
-			float Wig = 0.28;
-			float roughness = 10 / 0.2;
-			AiLightsPrepare(sg);
-			AtColor LaD = AI_RGB_BLACK; // initialize light accumulator to = 0
-			AtColor LaS = AI_RGB_BLACK; // initialize light accumulator to = 0
-			while (AiLightsGetSample(sg)) // loop over the lights
+			case S_SCANLINE:
 			{
-				float LdotN = AiV3Dot(sg->Ld, sg->Nf);
-				if (LdotN < 0) LdotN = 0;
-				AtVector H = AiV3Normalize(-sg->Rd + sg->Ld);
-				float spec = AiV3Dot(sg->Nf, H); // N dot H
-				if (spec < 0) spec = 0;
-				// Lambertian diffuse
-				LaD += sg->Li * Wig * sg->we * LdotN * Kd;
-				// Blinn-Phong specular
-				LaS += sg->Li * Wig * sg->we * pow(spec, roughness) * Ks;
+				AtColor Kd = AiShaderEvalParamRGB(p_lambert_color);
+				AtColor Ks = AI_RGB_WHITE;
+				float Wig = 0.28;
+				float roughness = 10 / 0.2;
+				AiLightsPrepare(sg);
+				AtColor LaD = AI_RGB_BLACK; // initialize light accumulator to = 0
+				AtColor LaS = AI_RGB_BLACK; // initialize light accumulator to = 0
+				while (AiLightsGetSample(sg)) // loop over the lights
+				{
+					float LdotN = AiV3Dot(sg->Ld, sg->Nf);
+					if (LdotN < 0) LdotN = 0;
+					AtVector H = AiV3Normalize(-sg->Rd + sg->Ld);
+					float spec = AiV3Dot(sg->Nf, H); // N dot H
+					if (spec < 0) spec = 0;
+					// Lambertian diffuse
+					LaD += sg->Li * Wig * sg->we * LdotN * Kd;
+					// Blinn-Phong specular
+					LaS += sg->Li * Wig * sg->we * pow(spec, roughness) * Ks;
+				}
+
+
+				// color = accumulated light + ambient
+				diffuse_raw = LaD;
+				lighting_result = LaD + LaS;
+				break;   	   			
 			}
-
-
-			// color = accumulated light + ambient
-			diffuse_raw = LaD;
-			lighting_result = LaD + LaS;
-			break;   	   			
-		}
-		case S_RAYTRACE:
-		{
-			// Kd (diffuse color), Ks (specular color), and roughness (scalar)
-			AtColor Kd = AiShaderEvalParamRGB(p_lambert_color);
-			AtColor Ks = AI_RGB_WHITE;
-			float roughness = 0.2f;
-			float specbalance = 0.1f; //hide parameter specbalance until we need ray-tracing render
-
-			// direct specular and diffuse accumulators, 
-			// and indirect diffuse and specular accumulators...
-			AtColor Dsa,Dda,IDs,IDd;
-			Dsa = Dda = IDs = IDd = AI_RGB_BLACK;
-			void *spec_data = AiWardDuerMISCreateData(sg, NULL, NULL, roughness, roughness);
-			void *diff_data = AiOrenNayarMISCreateData(sg, 0.0f);
-			AiLightsPrepare(sg);
-			while (AiLightsGetSample(sg)) // loop over the lights to compute direct effects
+			case S_RAYTRACE:
 			{
-				// direct specular
-				if (AiLightGetAffectSpecular(sg->Lp))
-					Dsa += AiEvaluateLightSample(sg, spec_data, AiWardDuerMISSample, AiWardDuerMISBRDF, AiWardDuerMISPDF) * specbalance;
-				// direct diffuse
-				if (AiLightGetAffectDiffuse(sg->Lp))
-					Dda += AiEvaluateLightSample(sg, diff_data, AiOrenNayarMISSample, AiOrenNayarMISBRDF, AiOrenNayarMISPDF) * (1-specbalance);
-			}
-			// indirect specular
-			IDs = AiWardDuerIntegrate(&sg->Nf, sg, &sg->dPdu, &sg->dPdv, roughness, roughness) * specbalance;
-			// indirect diffuse
-			IDd = AiOrenNayarIntegrate(&sg->Nf, sg, 0.0f) * (1-specbalance);
+				// Kd (diffuse color), Ks (specular color), and roughness (scalar)
+				AtColor Kd = AiShaderEvalParamRGB(p_lambert_color);
+				AtColor Ks = AI_RGB_WHITE;
+				float roughness = 0.2f;
+				float specbalance = 0.1f; //hide parameter specbalance until we need ray-tracing render
 
-			// add up indirect and direct contributions
-			lighting_result = Kd * (Dda + IDd) + Ks * (Dsa + IDs);
-			break;		
+				// direct specular and diffuse accumulators, 
+				// and indirect diffuse and specular accumulators...
+				AtColor Dsa,Dda,IDs,IDd;
+				Dsa = Dda = IDs = IDd = AI_RGB_BLACK;
+				void *spec_data = AiWardDuerMISCreateData(sg, NULL, NULL, roughness, roughness);
+				void *diff_data = AiOrenNayarMISCreateData(sg, 0.0f);
+				AiLightsPrepare(sg);
+				while (AiLightsGetSample(sg)) // loop over the lights to compute direct effects
+				{
+					// direct specular
+					if (AiLightGetAffectSpecular(sg->Lp))
+						Dsa += AiEvaluateLightSample(sg, spec_data, AiWardDuerMISSample, AiWardDuerMISBRDF, AiWardDuerMISPDF) * specbalance;
+					// direct diffuse
+					if (AiLightGetAffectDiffuse(sg->Lp))
+						Dda += AiEvaluateLightSample(sg, diff_data, AiOrenNayarMISSample, AiOrenNayarMISBRDF, AiOrenNayarMISPDF) * (1-specbalance);
+				}
+				// indirect specular
+				IDs = AiWardDuerIntegrate(&sg->Nf, sg, &sg->dPdu, &sg->dPdv, roughness, roughness) * specbalance;
+				// indirect diffuse
+				IDd = AiOrenNayarIntegrate(&sg->Nf, sg, 0.0f) * (1-specbalance);
+
+				// add up indirect and direct contributions
+				lighting_result = Kd * (Dda + IDd) + Ks * (Dsa + IDs);
+				break;		
+				}
+			default:
+			{
+				lighting_result = AI_RGB_RED;
+				break;
 			}
-		default:
-		{
-			lighting_result = AI_RGB_RED;
-			break;
-		}
-	}
+		} // ending switch
+	} // ending if
+
+	// do flat shadow
+	float diff_t = clamp(diffuse_raw.r, 0.0f, 1.0f);
 	AtColor shadow_ramp = AiShaderEvalParamRGB(p_shadow_ramp);
 	float shadow_position = AiShaderEvalParamFlt(p_shadow_position);
-	if(diffuse_raw.r >= shadow_position)
+	if(diff_t >= shadow_position)
 		result = AI_RGB_WHITE;
 	else
 		result = shadow_ramp;
+
 	sg->out.RGB = result;
 	AiAOVSetRGB(sg, data->aovs_custom[k_aov_sytoons_beauty].c_str(), result);
 }

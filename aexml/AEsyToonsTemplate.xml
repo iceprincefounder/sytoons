@@ -7,14 +7,6 @@
 			<label>Engine</label>
 			<description></description>
 		</attribute>
-		<attribute name="casting_light" type="maya.bool">
-			<label>Casting Light Only</label>
-			<description></description>
-		</attribute>
-		<attribute name="casting_texture" type="maya.bool">
-			<label>Casting Texture Only</label>
-			<description></description>
-		</attribute>
 		<attribute name="color_major" type="maya.float3">
 			<label>Major Color</label>
 			<description></description>
@@ -31,16 +23,24 @@
 			<label>Extra Color</label>
 			<description></description>
 		</attribute>
-		<attribute name="diffuse_color" type="maya.float3">
+		<attribute name="lambert_color" type="maya.float3">
 			<label>Diffuse Color</label>
 			<description></description>
 		</attribute>
-		<attribute name="specular_color" type="maya.float3">
+		<attribute name="shadow_ramp" type="maya.float3">
 			<label>Specular Color</label>
 			<description></description>
 		</attribute>
-		<attribute name="roughness" type="maya.float">
+		<attribute name="shadow_position" type="maya.float">
 			<label>Roughness</label>
+			<description></description>
+		</attribute>
+		<attribute name="casting_light" type="maya.bool">
+			<label>Casting Light Only</label>
+			<description></description>
+		</attribute>
+		<attribute name="casting_occlusion" type="maya.bool">
+			<label>Casting Texture Only</label>
 			<description></description>
 		</attribute>
 		<attribute name="aov_sytoons_beauty" type="maya.float3">
@@ -81,15 +81,15 @@
 			<property name="color_shadow"/>
 			<property name="color_mask"/>
 			<property name="color_extra"/>
-			<property name="casting_texture"/>
 			</group>
 			<group name="LightingShader">
 				<label>Lighting Shader</label>
 			<property name="diffuse_color"/>
 			<property name="specular_color"/>
 			<property name="roughness"/>
-			<property name="casting_light"/>
 			</group>
+			<property name="casting_light"/>
+			<property name="casting_occlusion"/>
 			<group name="AOVs">
 				<label>AOVs</label>
 			<property name="aov_sytoons_beauty"/>

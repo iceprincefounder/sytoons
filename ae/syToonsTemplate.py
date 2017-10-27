@@ -7,17 +7,18 @@ class AEsyToonsTemplate(syShadersTemplate):
 	def setup(self):
 		self.params.clear()
 		self.params["engine"] = Param("engine", "Engine", "", "enum", presets=None)
-		self.params["casting_light"] = Param("casting_light", "Casting Light Only", "", "bool", presets=None)
-		self.params["casting_texture"] = Param("casting_texture", "Casting Texture Only", "", "bool", presets=None)
 
 		self.params["color_major"] = Param("color_major", "Major Color", "", "rgb", presets=None)
 		self.params["color_shadow"] = Param("color_shadow", "Shadow Color", "", "rgb", presets=None)
 		self.params["color_mask"] = Param("color_mask", "Mask Color", "", "rgb", presets=None)
 		self.params["color_extra"] = Param("color_extra", "Extra Color", "", "rgb", presets=None)
 
-		self.params["diffuse_color"] = Param("diffuse_color", "Diffuse Color", "", "rgb", presets=None)
-		self.params["specular_color"] = Param("specular_color", "Specular Color", "", "rgb", presets=None)
-		self.params["roughness"] = Param("roughness", "Roughness", "", "float", presets=None)
+		self.params["lambert_color"] = Param("lambert_color", "Lambert Color", "", "rgb", presets=None)
+		self.params["shadow_ramp"] = Param("shadow_ramp", "Shadow Ramp", "", "rgb", presets=None)
+		self.params["shadow_position"] = Param("shadow_position", "Shadow Position", "", "float", presets=None)
+
+		self.params["casting_light"] = Param("casting_light", "Casting Light ", "", "bool", presets=None)
+		self.params["casting_occlusion"] = Param("casting_occlusion", "Casting Occlusion", "", "bool", presets=None)
 
 		self.params["aov_sytoons_beauty"] = Param("aov_sytoons_beauty", "Aov syToons Beauty", "", "rgb", presets=None)
 		self.params["aov_color_major"] = Param("aov_color_major", "Aov Color Major", "", "rgb", presets=None)
@@ -31,20 +32,21 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.beginScrollLayout()
 		self.addControl("engine", label="Engine", annotation="")
 
-		self.beginLayout("Texture Shader", collapse=False)
+		self.beginLayout("Texture Shading", collapse=False)
 		self.addControl("color_major", label="Major Color", annotation="")
 		self.addControl("color_shadow", label="Shadow Color", annotation="")
 		self.addControl("color_mask", label="Mask Color", annotation="")
 		self.addControl("color_extra", label="Extra Color", annotation="")
-		self.addControl("casting_texture", label="Casting Texture Only", annotation="")
 		self.endLayout() 
 
-		self.beginLayout("Lighting Shader", collapse=False)
-		self.addControl("diffuse_color", label="Diffuse Color", annotation="")
-		self.addControl("specular_color", label="Specular Color", annotation="")
-		self.addControl("roughness", label="Roughness", annotation="")
-		self.addControl("casting_light", label="Casting Light Only", annotation="")
+		self.beginLayout("Light Shading", collapse=False)
+		self.addControl("lambert_color", label="Diffuse Color", annotation="")
+		self.addControl("shadow_ramp", label="Specular Color", annotation="")
+		self.addControl("shadow_position", label="Roughness", annotation="")
 		self.endLayout()
+
+		self.addControl("casting_light", label="Casting Light", annotation="")
+		self.addControl("casting_occlusion", label="Casting Occlusion", annotation="")
 
 		self.beginLayout("AOVs", collapse=True)
 		self.addControl("aov_sytoons_beauty", label="Aov syToons Beauty", annotation="")
