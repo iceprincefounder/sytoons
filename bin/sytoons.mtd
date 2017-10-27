@@ -5,34 +5,50 @@
 	maya.id INT 0x17000001
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
-	[attr aov_sytoons_beauty]
+	[attr sy_aov_sytoons_beauty]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "aov_sytoons_beauty"
-	[attr aov_color_major]
+		default STRING "sy_aov_sytoons_beauty"
+	[attr sy_aov_color_major]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "aov_color_major"
-	[attr aov_color_shadow]
+		default STRING "sy_aov_color_major"
+	[attr sy_aov_color_shadow]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "aov_color_shadow"
-	[attr aov_color_mask]
+		default STRING "sy_aov_color_shadow"
+	[attr sy_aov_color_mask]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "aov_color_mask"
-	[attr aov_color_extra]
+		default STRING "sy_aov_color_mask"
+	[attr sy_aov_color_extra]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "aov_color_extra"
-	[attr aov_diffuse_color]
+		default STRING "sy_aov_color_extra"
+	[attr sy_aov_dynamic_shadow]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "aov_diffuse_color"
-	[attr aov_specular_color]
+		default STRING "sy_aov_dynamic_shadow"
+	[attr sy_aov_dynamic_shadow_raw]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "aov_specular_color"
+		default STRING "sy_aov_dynamic_shadow_raw"
+	[attr sy_aov_normal]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_normal"
+	[attr sy_aov_fresnel]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_fresnel"
+	[attr sy_aov_depth]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_depth"
+	[attr sy_aov_occlusion]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_occlusion"
 
 [node syRamp]
 	desc STRING ""

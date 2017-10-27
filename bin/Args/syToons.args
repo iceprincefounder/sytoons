@@ -19,12 +19,16 @@
   <param label="Casting Light" name="casting_light" widget="checkBox"/>
   <param label="Casting Occlusion" name="casting_occlusion" widget="checkBox"/>
   <page name="AOVs" open="false">
-    <param label="aov_sytoons_beauty" name="aov_sytoons_beauty"/>
-    <param label="aov_color_major" name="aov_color_major"/>
-    <param label="aov_color_shadow" name="aov_color_shadow"/>
-    <param label="aov_color_mask" name="aov_color_mask"/>
-    <param label="aov_color_extra" name="aov_color_extra"/>
-    <param label="aov_diffuse_color" name="aov_diffuse_color"/>
-    <param label="aov_specular_color" name="aov_specular_color"/>
+    <param label="sy_aov_sytoons_beauty" name="sy_aov_sytoons_beauty"/>
+    <param label="sy_aov_color_major" name="sy_aov_color_major"/>
+    <param label="sy_aov_color_shadow" name="sy_aov_color_shadow"/>
+    <param label="sy_aov_color_mask" name="sy_aov_color_mask"/>
+    <param label="sy_aov_color_extra" name="sy_aov_color_extra"/>
+    <param label="sy_aov_dynamic_shadow" name="sy_aov_dynamic_shadow"/>
+    <param label="sy_aov_dynamic_shadow_raw" name="sy_aov_dynamic_shadow_raw"/>
+    <param label="sy_aov_normal" name="sy_aov_normal"/>
+    <param label="sy_aov_fresnel" name="sy_aov_fresnel"/>
+    <param label="sy_aov_depth" name="sy_aov_depth"/>
+    <param label="sy_aov_occlusion" name="sy_aov_occlusion"/>
   </page>
 </args>

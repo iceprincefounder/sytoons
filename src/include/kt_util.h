@@ -22,27 +22,35 @@
 #ifndef REGISTER_AOVS_CUSTOM
 #define REGISTER_AOVS_CUSTOM \
 data->aovs_custom.clear(); \
-data->aovs_custom.push_back(params[p_aov_sytoons_beauty].STR); \
-data->aovs_custom.push_back(params[p_aov_color_major].STR); \
-data->aovs_custom.push_back(params[p_aov_color_shadow].STR); \
-data->aovs_custom.push_back(params[p_aov_color_mask].STR); \
-data->aovs_custom.push_back(params[p_aov_color_extra].STR); \
-data->aovs_custom.push_back(params[p_aov_diffuse_color].STR); \
-data->aovs_custom.push_back(params[p_aov_specular_color].STR); \
-assert(data->aovs_custom.size() == 7 && "NUM_AOVs does not match size of aovs array!"); \
+data->aovs_custom.push_back(params[p_sy_aov_sytoons_beauty].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_color_major].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_color_shadow].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_color_mask].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_color_extra].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_dynamic_shadow].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_dynamic_shadow_raw].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_normal].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_fresnel].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_depth].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_occlusion].STR); \
+assert(data->aovs_custom.size() == 11 && "NUM_AOVs does not match size of aovs array!"); \
 for (size_t i=0; i < data->aovs_custom.size(); ++i) \
 	AiAOVRegister(data->aovs_custom[i].c_str(), AI_TYPE_RGB, AI_AOV_BLEND_OPACITY);
 #endif
 
 enum AovIndices
 {
-	k_aov_sytoons_beauty = 0,
-	k_aov_color_major,
-	k_aov_color_shadow,
-	k_aov_color_mask,
-	k_aov_color_extra,
-	k_aov_diffuse_color,
-	k_aov_specular_color
+	k_sy_aov_sytoons_beauty = 0,
+	k_sy_aov_color_major,
+	k_sy_aov_color_shadow,
+	k_sy_aov_color_mask,
+	k_sy_aov_color_extra,
+	k_sy_aov_dynamic_shadow,
+	k_sy_aov_dynamic_shadow_raw,
+	k_sy_aov_normal,
+	k_sy_aov_fresnel,
+	k_sy_aov_depth,
+	k_sy_aov_occlusion,
 };
 
 
