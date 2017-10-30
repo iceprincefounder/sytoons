@@ -1,5 +1,6 @@
 # sytoons
-Arnold Cartoons Shaders At SY3T
+
+![sytoons_network](https://github.com/iceprincefounder/sytoons/blob/master/wiki/sytoons_logo.png)
 
 
 # Supported Platforms
