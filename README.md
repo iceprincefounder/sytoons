@@ -1,7 +1,8 @@
-# sytoons
-
 ![sytoons_network](https://github.com/iceprincefounder/sytoons/blob/master/wiki/sytoons_logo.png)
 
+# sytoons
+
+Arnold sytoons shaders are a shader kit to render cartoon image with power and speed!
 
 # Supported Platforms
 
