@@ -208,16 +208,35 @@ shader_evaluate
 		float diff_t = clamp(diffuse_raw.r, 0.0f, 1.0f);
 		AtColor shadow_ramp = AiShaderEvalParamRGB(p_shadow_ramp);
 		float shadow_position = AiShaderEvalParamFlt(p_shadow_position);
-		if(diff_t >= shadow_position)
+		
+		bool isMayaRamp = false;
+		AtRGB diffuseLUT[LUT_SIZE];
+		AtArray* diffusePositions = NULL;
+		AtArray* diffuseColors = NULL;
+		kt::RampInterpolationType diffuseInterp;
+		// if Shadow Ramp connected with MayaRamp,we will caculate ramp color with MayaRamp value
+		isMayaRamp = kt::getMayaRampArrays(node, "shadow_ramp", &diffusePositions, &diffuseColors, &diffuseInterp);
+		if(isMayaRamp) // if MayaRamp connected
 		{
-			shadow_result = AI_RGB_WHITE;
-			shadow_raw_result = AI_RGB_WHITE;	
+			unsigned int* shuffle = (unsigned int*)AiShaderGlobalsQuickAlloc(sg, sizeof(unsigned int) * diffusePositions->nelements);
+			kt::SortFloatIndexArray(diffusePositions, shuffle);
+			kt::Ramp(diffusePositions, diffuseColors, diff_t, diffuseInterp, shadow_result, shuffle);
+			shadow_raw_result = shadow_result;
 		}
-		else
+		else // if no MayaRamp connected,use defalut shadow ramp
 		{
-			shadow_result = shadow_ramp;
-			shadow_raw_result = AI_RGB_BLACK;
+			if(diff_t >= shadow_position)
+			{
+				shadow_result = AI_RGB_WHITE;
+				shadow_raw_result = AI_RGB_WHITE;	
+			}
+			else
+			{
+				shadow_result = shadow_ramp;
+				shadow_raw_result = AI_RGB_BLACK;
+			}			
 		}
+
 	} // ending if
 
 	// result
