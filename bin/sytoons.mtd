@@ -21,10 +21,10 @@
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
 		default STRING "sy_aov_color_mask"
-	[attr sy_aov_color_extra]
+	[attr sy_aov_outline]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
-		default STRING "sy_aov_color_extra"
+		default STRING "sy_aov_outline"
 	[attr sy_aov_dynamic_shadow]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE

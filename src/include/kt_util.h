@@ -26,7 +26,7 @@ data->aovs_custom.push_back(params[p_sy_aov_sytoons_beauty].STR); \
 data->aovs_custom.push_back(params[p_sy_aov_color_major].STR); \
 data->aovs_custom.push_back(params[p_sy_aov_color_shadow].STR); \
 data->aovs_custom.push_back(params[p_sy_aov_color_mask].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_color_extra].STR); \
+data->aovs_custom.push_back(params[p_sy_aov_outline].STR); \
 data->aovs_custom.push_back(params[p_sy_aov_dynamic_shadow].STR); \
 data->aovs_custom.push_back(params[p_sy_aov_dynamic_shadow_raw].STR); \
 data->aovs_custom.push_back(params[p_sy_aov_normal].STR); \
@@ -44,7 +44,7 @@ enum AovIndices
 	k_sy_aov_color_major,
 	k_sy_aov_color_shadow,
 	k_sy_aov_color_mask,
-	k_sy_aov_color_extra,
+  k_sy_aov_outline,
 	k_sy_aov_dynamic_shadow,
 	k_sy_aov_dynamic_shadow_raw,
 	k_sy_aov_normal,

@@ -19,8 +19,8 @@
 			<label>Mask Color</label>
 			<description></description>
 		</attribute>
-		<attribute name="color_extra" type="maya.float3">
-			<label>Extra Color</label>
+		<attribute name="color_outline" type="maya.float3">
+			<label>Outline Color</label>
 			<description></description>
 		</attribute>
 		<attribute name="lambert_color" type="maya.float3">
@@ -59,8 +59,8 @@
 			<label>Aov Color Mask</label>
 			<description></description>
 		</attribute>
-		<attribute name="sy_aov_color_extra" type="maya.float3">
-			<label>Aov Color Extra</label>
+		<attribute name="sy_aov_outline" type="maya.float3">
+			<label>Aov Outline</label>
 			<description></description>
 		</attribute>
 		<attribute name="sy_aov_dynamic_shadow" type="maya.float3">
@@ -96,7 +96,7 @@
 			<property name="color_major"/>
 			<property name="color_shadow"/>
 			<property name="color_mask"/>
-			<property name="color_extra"/>
+			<property name="color_outline"/>
 			</group>
 			<group name="LightShading">
 				<label>Light Shading</label>
@@ -115,7 +115,7 @@
 			<property name="sy_aov_color_major"/>
 			<property name="sy_aov_color_shadow"/>
 			<property name="sy_aov_color_mask"/>
-			<property name="sy_aov_color_extra"/>
+			<property name="sy_aov_outline"/>
 			<property name="sy_aov_dynamic_shadow"/>
 			<property name="sy_aov_dynamic_shadow_raw"/>
 			<property name="sy_aov_normal"/>

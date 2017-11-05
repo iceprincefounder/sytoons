@@ -13,8 +13,8 @@
 		<attribute name="colorMask" type="maya.float3">
 			<label>Mask Color</label>
 		</attribute>
-		<attribute name="colorExtra" type="maya.float3">
-			<label>Extra Color</label>
+		<attribute name="colorOutline" type="maya.float3">
+			<label>Outline Color</label>
 		</attribute>
 		<attribute name="lambertColor" type="maya.float3">
 			<label>Lambert Color</label>
@@ -31,7 +31,7 @@
 		<property name="colorMajor" />
 		<property name="colorShadow" />
 		<property name="colorMask" />
-		<property name="colorExtra" />
+		<property name="colorOutline" />
 		<property name="lambertColor" />
 		<property name="shadowRamp" />
 		<property name="shadowPosition" />
