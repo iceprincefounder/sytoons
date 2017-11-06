@@ -124,7 +124,7 @@ shader_evaluate
 
 	// do shading
 	AtColor result = AI_RGB_BLACK;
-	float outOpacity = 1.0f;
+	AtColor result_opacity = sg->out_opacity;
 	AtColor diffuse_raw = AI_RGB_BLACK;
 	AtColor texture_result = AI_RGB_BLACK;
 	AtColor lighting_result = AI_RGB_WHITE;
@@ -203,7 +203,7 @@ shader_evaluate
 
 			// result
 			result = texture_result*shadow_result;
-
+			result_opacity = AI_RGB_WHITE;
 			// set flat shader aovs
 			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_major].c_str(), color_major);
 			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_shadow].c_str(), color_shadow);
@@ -234,96 +234,11 @@ shader_evaluate
 		}
 		case S_SCANLINE_OUTLINE:
 		{
-			if(casting_light)
-			{
-				AtColor Kd = AiShaderEvalParamRGB(p_lambert_color);
-				AtColor Ks = AI_RGB_WHITE;
-				float Wig = 0.28;
-				float roughness = 10 / 0.2;
-				AiLightsPrepare(sg);
-				AtColor LaD = AI_RGB_BLACK; // initialize light accumulator to = 0
-				AtColor LaS = AI_RGB_BLACK; // initialize light accumulator to = 0
-				while (AiLightsGetSample(sg)) // loop over the lights
-				{
-					float LdotN = AiV3Dot(sg->Ld, sg->Nf);
-					if (LdotN < 0) LdotN = 0;
-					AtVector H = AiV3Normalize(-sg->Rd + sg->Ld);
-					float spec = AiV3Dot(sg->Nf, H); // N dot H
-					if (spec < 0) spec = 0;
-					// Lambertian diffuse
-					LaD += sg->Li * Wig * sg->we * LdotN * Kd;
-					// Blinn-Phong specular
-					LaS += sg->Li * Wig * sg->we * pow(spec, roughness) * Ks;
-				}
-
-
-				// color = accumulated light + ambient
-				diffuse_raw = LaD;
-				lighting_result = LaD + LaS;
-
-				// caculate flat shadow
-				float diff_t = clamp(diffuse_raw.r, 0.0f, 1.0f);
-				AtColor shadow_ramp = AiShaderEvalParamRGB(p_shadow_ramp);
-				float shadow_position = AiShaderEvalParamFlt(p_shadow_position);
-				
-				bool isMayaRamp = false;
-				AtRGB diffuseLUT[LUT_SIZE];
-				AtArray* diffusePositions = NULL;
-				AtArray* diffuseColors = NULL;
-				kt::RampInterpolationType diffuseInterp;
-				// if Shadow Ramp connected with MayaRamp,we will caculate ramp color with MayaRamp value
-				isMayaRamp = kt::getMayaRampArrays(node, "shadow_ramp", &diffusePositions, &diffuseColors, &diffuseInterp);
-				if(isMayaRamp) // if MayaRamp connected
-				{
-					unsigned int* shuffle = (unsigned int*)AiShaderGlobalsQuickAlloc(sg, sizeof(unsigned int) * diffusePositions->nelements);
-					kt::SortFloatIndexArray(diffusePositions, shuffle);
-					kt::Ramp(diffusePositions, diffuseColors, diff_t, diffuseInterp, shadow_result, shuffle);
-					shadow_raw_result = shadow_result;
-				}
-				else // if no MayaRamp connected,use defalut shadow ramp
-				{
-					if(diff_t >= shadow_position)
-					{
-						shadow_result = AI_RGB_WHITE;
-						shadow_raw_result = AI_RGB_WHITE;	
-					}
-					else
-					{
-						shadow_result = shadow_ramp;
-						shadow_raw_result = AI_RGB_BLACK;
-					}			
-				}
-
-			} // ending if casting light
-
 			// result
 			result = color_outline;
+			result_opacity = AI_RGB_BLACK;
 			// set outline aov
 			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline].c_str(), result);
-			// set flat shader aovs
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_major].c_str(), color_major);
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_shadow].c_str(), color_shadow);
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_mask].c_str(), color_mask);
-			// set dynamic shadow aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow].c_str(), shadow_result);
-			// set dynamic shadow raw aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow_raw].c_str(), shadow_raw_result);
-			// caculate normal aov
-			AtColor normal = AiColor(sg->N.x,sg->N.y,sg->N.z);
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal].c_str(), normal);
-			// caculate facingratio aov
-			AtColor fresnel = AiColor(1-AiV3Dot(sg->Nf, -sg->Rd));
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_fresnel].c_str(), fresnel);
-			// caculate depth aov
-			AtColor depth = AiColor(sg->Rl);
-			// caculate occlusion aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth].c_str(), depth);
-			if(casting_occlusion)
-			{
-				AtVector Nbent;
-				AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&sg->N, &sg->Ng, sg, 0.0f, 2000.0f, 1.0f, 0.0f, AiSampler(8,2), &Nbent);
-				AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion].c_str(), occlusion);    		
-			}
 			// set beauty aov
 			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_sytoons_beauty].c_str(), result);
 			break;
@@ -370,5 +285,6 @@ shader_evaluate
 	}
 
 	sg->out.RGB = result;
+	sg->out_opacity = result_opacity;
 }
 
