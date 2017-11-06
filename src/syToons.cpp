@@ -24,16 +24,14 @@ AI_SHADER_NODE_EXPORT_METHODS(syToonsMethods);
 
 enum EngineParams
 {
-	S_SCANLINE_SURFACE = 0,
-	S_SCANLINE_OUTLINE,
-	S_RAYTRACE_SURFACE
+	S_SCANLINE= 0,
+	S_RAYTRACE
 };
 
 const char* engine_params[] = 
 {
-	"ScanlineSurface",
-	"ScanlineOutline",
-	"RaytraceSurface(beta)",
+	"Scanline",
+	"Raytrace(beta)",
 	NULL
 };
 
@@ -63,7 +61,7 @@ enum Params {
 
 node_parameters
 {
-	AiParameterEnum("engine", S_SCANLINE_SURFACE, engine_params);
+	AiParameterEnum("engine", S_SCANLINE, engine_params);
 	AiParameterRGB("color_major", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("color_shadow", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
@@ -124,7 +122,6 @@ shader_evaluate
 
 	// do shading
 	AtColor result = AI_RGB_BLACK;
-	AtColor result_opacity = sg->out_opacity;
 	AtColor diffuse_raw = AI_RGB_BLACK;
 	AtColor texture_result = AI_RGB_BLACK;
 	AtColor lighting_result = AI_RGB_WHITE;
@@ -137,9 +134,9 @@ shader_evaluate
 	// light shading
 	switch (shading_engine)
 	{
-		case S_SCANLINE_SURFACE:
+		case S_SCANLINE:
 		{
-			if(casting_light)
+			if(casting_light && sg->Rt & AI_RAY_CAMERA)
 			{
 				AtColor Kd = AiShaderEvalParamRGB(p_lambert_color);
 				AtColor Ks = AI_RGB_WHITE;
@@ -203,47 +200,9 @@ shader_evaluate
 
 			// result
 			result = texture_result*shadow_result;
-			result_opacity = AI_RGB_WHITE;
-			// set flat shader aovs
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_major].c_str(), color_major);
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_shadow].c_str(), color_shadow);
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_mask].c_str(), color_mask);
-			// set dynamic shadow aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow].c_str(), shadow_result);
-			// set dynamic shadow raw aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow_raw].c_str(), shadow_raw_result);
-			// caculate normal aov
-			AtColor normal = AiColor(sg->N.x,sg->N.y,sg->N.z);
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal].c_str(), normal);
-			// caculate facingratio aov
-			AtColor fresnel = AiColor(1-AiV3Dot(sg->Nf, -sg->Rd));
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_fresnel].c_str(), fresnel);
-			// caculate depth aov
-			AtColor depth = AiColor(sg->Rl);
-			// caculate occlusion aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth].c_str(), depth);
-			if(casting_occlusion)
-			{
-				AtVector Nbent;
-				AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&sg->N, &sg->Ng, sg, 0.0f, 2000.0f, 1.0f, 0.0f, AiSampler(8,2), &Nbent);
-				AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion].c_str(), occlusion);    		
-			}
-			// set beauty aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_sytoons_beauty].c_str(), result);
 			break;
 		}
-		case S_SCANLINE_OUTLINE:
-		{
-			// result
-			result = color_outline;
-			result_opacity = AI_RGB_BLACK;
-			// set outline aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline].c_str(), result);
-			// set beauty aov
-			AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_sytoons_beauty].c_str(), result);
-			break;
-		}
-		case S_RAYTRACE_SURFACE:
+		case S_RAYTRACE:
 		{
 			// Kd (diffuse color), Ks (specular color), and roughness (scalar)
 			AtColor Kd = AiShaderEvalParamRGB(p_lambert_color);
@@ -284,7 +243,37 @@ shader_evaluate
 		}
 	}
 
+	// set outline aov
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline].c_str(), color_outline);
+
+	// set flat shader aovs
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_major].c_str(), color_major);
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_shadow].c_str(), color_shadow);
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_mask].c_str(), color_mask);
+	// set dynamic shadow aov
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow].c_str(), shadow_result);
+	// set dynamic shadow raw aov
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow_raw].c_str(), shadow_raw_result);
+	// set beauty aov
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_sytoons_beauty].c_str(), result);
+
+	// caculate normal aov
+	AtColor normal = AiColor(sg->N.x,sg->N.y,sg->N.z);
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal].c_str(), normal);
+	// caculate facingratio aov
+	AtColor fresnel = AiColor(1-AiV3Dot(sg->Nf, -sg->Rd));
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_fresnel].c_str(), fresnel);
+	// caculate depth aov
+	AtColor depth = AiColor(sg->Rl);
+	// caculate occlusion aov
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth].c_str(), depth);
+	if(casting_occlusion)
+	{
+		AtVector Nbent;
+		AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&sg->N, &sg->Ng, sg, 0.0f, 2000.0f, 1.0f, 0.0f, AiSampler(8,2), &Nbent);
+		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion].c_str(), occlusion);    		
+	}
+
 	sg->out.RGB = result;
-	sg->out_opacity = result_opacity;
 }
 

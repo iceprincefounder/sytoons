@@ -2,14 +2,14 @@
   <param label="Engine" name="engine" widget="popup">
     <hintlist name="options">
       <string value="Scanline"/>
-      <string value="Raytrace"/>
+      <string value="Raytrace(beta)"/>
     </hintlist>
   </param>
   <page name="Texture Shading" open="True">
     <param label="Major Color" name="color_major" widget="color"/>
     <param label="Shadow Color" name="color_shadow" widget="color"/>
     <param label="Mask Color" name="color_mask" widget="color"/>
-    <param label="Extra Color" name="color_extra" widget="color"/>
+    <param label="Outline Color" name="color_outline" widget="color"/>
   </page>
   <page name="Light Shading" open="True">
     <param label="Lambert Color" name="lambert_color" widget="color"/>
@@ -23,7 +23,7 @@
     <param label="sy_aov_color_major" name="sy_aov_color_major"/>
     <param label="sy_aov_color_shadow" name="sy_aov_color_shadow"/>
     <param label="sy_aov_color_mask" name="sy_aov_color_mask"/>
-    <param label="sy_aov_color_extra" name="sy_aov_color_extra"/>
+    <param label="sy_aov_outline" name="sy_aov_outline"/>
     <param label="sy_aov_dynamic_shadow" name="sy_aov_dynamic_shadow"/>
     <param label="sy_aov_dynamic_shadow_raw" name="sy_aov_dynamic_shadow_raw"/>
     <param label="sy_aov_normal" name="sy_aov_normal"/>
