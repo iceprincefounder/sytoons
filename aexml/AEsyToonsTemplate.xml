@@ -19,6 +19,10 @@
 			<label>Mask Color</label>
 			<description></description>
 		</attribute>
+		<attribute name="enable_outline" type="maya.bool">
+			<label>Enable Outline</label>
+			<description></description>
+		</attribute>
 		<attribute name="color_outline" type="maya.float3">
 			<label>Outline Color</label>
 			<description></description>
@@ -96,6 +100,10 @@
 			<property name="color_major"/>
 			<property name="color_shadow"/>
 			<property name="color_mask"/>
+			</group>
+			<group name="TextureShading">
+				<label>Texture Shading</label>
+			<property name="enable_outline"/>
 			<property name="color_outline"/>
 			</group>
 			<group name="LightShading">

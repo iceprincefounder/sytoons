@@ -40,6 +40,7 @@ enum Params {
 	p_color_major,
 	p_color_shadow,
 	p_color_mask,
+	p_enable_outline,
 	p_color_outline,
 	p_lambert_color,
 	p_shadow_ramp,
@@ -65,6 +66,7 @@ node_parameters
 	AiParameterRGB("color_major", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("color_shadow", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
+	AiParameterBool("enable_outline", false);
 	AiParameterRGB("color_outline", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("shadow_ramp", 0.0f, 0.0f, 0.0f);
@@ -117,6 +119,7 @@ shader_evaluate
 	AtColor color_shadow = AiShaderEvalParamRGB(p_color_shadow);
 	AtColor color_mask = AiShaderEvalParamRGB(p_color_mask);
 	AtColor color_outline = AiShaderEvalParamRGB(p_color_outline);
+	bool enable_outline = AiShaderEvalParamBool(p_enable_outline);	
 	bool casting_light = AiShaderEvalParamBool(p_casting_light);
 	bool casting_occlusion = AiShaderEvalParamBool(p_casting_occlusion);
 
@@ -243,9 +246,12 @@ shader_evaluate
 		}
 	}
 
-	// set outline aov
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline].c_str(), color_outline);
-
+	if(enable_outline)
+	{	
+		// set outline aov
+		result = color_outline;
+		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline].c_str(), color_outline);
+	}
 	// set flat shader aovs
 	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_major].c_str(), color_major);
 	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_shadow].c_str(), color_shadow);

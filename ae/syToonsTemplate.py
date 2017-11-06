@@ -11,6 +11,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.params["color_major"] = Param("color_major", "Major Color", "", "rgb", presets=None)
 		self.params["color_shadow"] = Param("color_shadow", "Shadow Color", "", "rgb", presets=None)
 		self.params["color_mask"] = Param("color_mask", "Mask Color", "", "rgb", presets=None)
+		self.params["enable_outline"] = Param("enable_outline", "Enable Outline", "", "bool", presets=None)
 		self.params["color_outline"] = Param("color_outline", "Outline Color", "", "rgb", presets=None)
 
 		self.params["lambert_color"] = Param("lambert_color", "Lambert Color", "", "rgb", presets=None)
@@ -40,6 +41,10 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.addControl("color_major", label="Major Color", annotation="")
 		self.addControl("color_shadow", label="Shadow Color", annotation="")
 		self.addControl("color_mask", label="Mask Color", annotation="")
+		self.endLayout() 
+
+		self.beginLayout("Outline Shading", collapse=False)
+		self.addControl("enable_outline", label="Enable Outline", annotation="")
 		self.addControl("color_outline", label="Outline Color", annotation="")
 		self.endLayout() 
 
