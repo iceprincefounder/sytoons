@@ -69,7 +69,7 @@ node_parameters
 	AiParameterBool("enable_outline", false);
 	AiParameterRGB("color_outline", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
-	AiParameterRGB("shadow_ramp", 0.0f, 0.0f, 0.0f);
+	AiParameterRGB("shadow_ramp", 0.5f, 0.5f, 0.5f);
 	AiParameterFLT("shadow_position", 0.1f);
 	AiParameterBool("casting_light", true);
 	AiParameterBool("casting_occlusion", false);
