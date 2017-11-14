@@ -47,6 +47,10 @@
 			<label>Casting Occlusion</label>
 			<description></description>
 		</attribute>
+		<attribute name="use_ramp_color" type="maya.bool">
+			<label>Use Ramp Color</label>
+			<description></description>
+		</attribute>
 		<attribute name="sy_aov_sytoons_beauty" type="maya.float3">
 			<label>Aov syToons Beauty</label>
 			<description></description>
@@ -116,6 +120,7 @@
 				<label>Light Shading</label>
 			<property name="casting_light"/>
 			<property name="casting_occlusion"/>
+			<property name="use_ramp_color"/>
 			</group>
 			<group name="AOVs">
 				<label>AOVs</label>

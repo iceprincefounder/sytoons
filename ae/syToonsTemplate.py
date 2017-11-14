@@ -20,6 +20,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 
 		self.params["casting_light"] = Param("casting_light", "Casting Light ", "", "bool", presets=None)
 		self.params["casting_occlusion"] = Param("casting_occlusion", "Casting Occlusion", "", "bool", presets=None)
+		self.params["use_ramp_color"] = Param("use_ramp_color", "Use Ramp Color", "", "bool", presets=None)
 
 		self.params["sy_aov_sytoons_beauty"] = Param("sy_aov_sytoons_beauty", "Aov syToons Beauty", "", "rgb", presets=None)
 		self.params["sy_aov_color_major"] = Param("sy_aov_color_major", "Aov Color Major", "", "rgb", presets=None)
@@ -57,6 +58,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.beginLayout("Optimization", collapse=False)
 		self.addControl("casting_light", label="Casting Light", annotation="")
 		self.addControl("casting_occlusion", label="Casting Occlusion", annotation="")
+		self.addControl("use_ramp_color", label="Use Ramp Color", annotation="")
 		self.endLayout()
 
 		self.beginLayout("AOVs", collapse=True)
