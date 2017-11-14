@@ -47,6 +47,7 @@ enum Params {
 	p_shadow_position,
 	p_casting_light,
 	p_casting_occlusion,
+	p_use_ramp_color,
 	p_sy_aov_sytoons_beauty,
 	p_sy_aov_color_major,
 	p_sy_aov_color_shadow,
@@ -73,6 +74,7 @@ node_parameters
 	AiParameterFLT("shadow_position", 0.1f);
 	AiParameterBool("casting_light", true);
 	AiParameterBool("casting_occlusion", false);
+	AiParameterBool("use_ramp_color", false);
 
 	AiParameterStr("sy_aov_sytoons_beauty", "sy_aov_sytoons_beauty");
 	AiParameterStr("sy_aov_color_major", "sy_aov_color_major");
@@ -122,6 +124,7 @@ shader_evaluate
 	bool enable_outline = AiShaderEvalParamBool(p_enable_outline);	
 	bool casting_light = AiShaderEvalParamBool(p_casting_light);
 	bool casting_occlusion = AiShaderEvalParamBool(p_casting_occlusion);
+	bool use_ramp_color = AiShaderEvalParamBool(p_use_ramp_color);
 
 	// do shading
 	AtColor result = AI_RGB_BLACK;
@@ -202,8 +205,10 @@ shader_evaluate
 			} // ending if casting light
 
 			// result
-			//result = texture_result*shadow_result;
-			result = lerp(color_shadow,texture_result,shadow_raw_result.r);
+			if(use_ramp_color)
+				result = texture_result*shadow_result;
+			else
+				result = lerp(color_shadow,texture_result,shadow_raw_result.r);
 			break;
 		}
 		case S_RAYTRACE:

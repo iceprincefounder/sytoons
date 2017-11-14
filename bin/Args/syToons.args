@@ -22,6 +22,7 @@
   <page name="Optimization" open="True">
   <param label="Casting Light" name="casting_light" widget="checkBox"/>
   <param label="Casting Occlusion" name="casting_occlusion" widget="checkBox"/>
+  <param label="Use Ramp Color" name="use_ramp_color" widget="checkBox"/>
   </page>
   <page name="AOVs" open="false">
     <param label="sy_aov_sytoons_beauty" name="sy_aov_sytoons_beauty"/>
