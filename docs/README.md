@@ -1,14 +1,5 @@
 Welcome to the sytoons wiki!
 ----
-![sytoons_logo](https://github.com/iceprincefounder/sytoons/blob/master/wiki/sytoons_logo.png)
-
-
-Reference:
-----
-* http://weixin.niurenqushi.com/article/2017-05-15/4850259.html
-* http://bbs.cgwell.com/forum.php?mod=viewthread&tid=10078
-* https://zhuanlan.zhihu.com/pixelife/26409746
-* http://blog.csdn.net/candycat1992/article/details/50167285
 
 Copyright:
 ----
