@@ -9,6 +9,9 @@
     <param label="Major Color" name="color_major" widget="color"/>
     <param label="Shadow Color" name="color_shadow" widget="color"/>
     <param label="Mask Color" name="color_mask" widget="color"/>
+  </page>
+  <page name="Outline Shading" open="True">
+    <param label="Enable Outline" name="enable_outline" widget="checkBox"/>
     <param label="Outline Color" name="color_outline" widget="color"/>
   </page>
   <page name="Light Shading" open="True">
@@ -16,8 +19,10 @@
     <param label="Shadow Ramp" name="shadow_ramp" widget="color"/>
     <param label="Shadow Position" name="shadow_position" slider="True"/>
   </page>
+  <page name="Optimization" open="True">
   <param label="Casting Light" name="casting_light" widget="checkBox"/>
   <param label="Casting Occlusion" name="casting_occlusion" widget="checkBox"/>
+  </page>
   <page name="AOVs" open="false">
     <param label="sy_aov_sytoons_beauty" name="sy_aov_sytoons_beauty"/>
     <param label="sy_aov_color_major" name="sy_aov_color_major"/>

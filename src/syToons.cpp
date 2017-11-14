@@ -69,7 +69,7 @@ node_parameters
 	AiParameterBool("enable_outline", false);
 	AiParameterRGB("color_outline", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
-	AiParameterRGB("shadow_ramp", 0.5f, 0.5f, 0.5f);
+	AiParameterRGB("shadow_ramp", 0.15f, 0.15f, 0.15f);
 	AiParameterFLT("shadow_position", 0.1f);
 	AiParameterBool("casting_light", true);
 	AiParameterBool("casting_occlusion", false);
@@ -183,7 +183,7 @@ shader_evaluate
 					unsigned int* shuffle = (unsigned int*)AiShaderGlobalsQuickAlloc(sg, sizeof(unsigned int) * diffusePositions->nelements);
 					kt::SortFloatIndexArray(diffusePositions, shuffle);
 					kt::Ramp(diffusePositions, diffuseColors, diff_t, diffuseInterp, shadow_result, shuffle);
-					shadow_raw_result = shadow_result;
+					shadow_raw_result = (shadow_result.r+shadow_result.g+shadow_result.b)/3;
 				}
 				else // if no MayaRamp connected,use defalut shadow ramp
 				{
@@ -202,7 +202,8 @@ shader_evaluate
 			} // ending if casting light
 
 			// result
-			result = texture_result*shadow_result;
+			//result = texture_result*shadow_result;
+			result = lerp(color_shadow,texture_result,shadow_raw_result.r);
 			break;
 		}
 		case S_RAYTRACE:
