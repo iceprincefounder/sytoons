@@ -1,4 +1,4 @@
-![sytoons_network](https://github.com/iceprincefounder/sytoons/blob/master/wiki/sytoons_logo.png)
+![sytoons_network](https://github.com/iceprincefounder/sytoons/blob/master/docs/images/sytoons_logo.png)
 
 # sytoons
 
