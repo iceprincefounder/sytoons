@@ -17,6 +17,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.params["lambert_color"] = Param("lambert_color", "Lambert Color", "", "rgb", presets=None)
 		self.params["shadow_ramp"] = Param("shadow_ramp", "Shadow Ramp", "", "rgb", presets=None)
 		self.params["shadow_position"] = Param("shadow_position", "Shadow Position", "", "float", presets=None)
+		self.params["normal"] = Param("normal", "Normal", "", "vector", presets=None)
 
 		self.params["casting_light"] = Param("casting_light", "Casting Light ", "", "bool", presets=None)
 		self.params["casting_occlusion"] = Param("casting_occlusion", "Casting Occlusion", "", "bool", presets=None)
@@ -53,6 +54,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.addControl("lambert_color", label="Lambert Color", annotation="")
 		self.addControl("shadow_ramp", label="Shadow Ramp", annotation="")
 		self.addCustomFlt("shadow_position")
+		self.addControl("normal", label="Normal", annotation="")
 		self.endLayout()
 
 		self.beginLayout("Optimization", collapse=False)
@@ -74,7 +76,8 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.addControl("sy_aov_depth", label="Aov Depth", annotation="")
 		self.addControl("sy_aov_occlusion", label="Aov Occlusion", annotation="")
 		self.endLayout() # END AOVs
-
+		self.addBumpLayout()
+		
 		pm.mel.AEdependNodeTemplate(self.nodeName)
 		self.addExtraControls()
 

@@ -56,6 +56,7 @@ enum AovIndices
 
 struct ShaderData
 {
+    bool hasChainedNormal;
     // AOV names
     std::vector<std::string> aovs;
     std::vector<std::string> aovs_rgba;
