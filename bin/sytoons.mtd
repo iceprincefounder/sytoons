@@ -5,6 +5,38 @@
 	maya.id INT 0x17000001
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
+	[attr engine]
+		desc STRING ""
+		linkable BOOL FALSE
+	[attr color_major]
+		desc STRING "Color of Major"
+		linkable BOOL TRUE
+	[attr color_shadow]
+		desc STRING "Color of Shadow"
+		linkable BOOL TRUE
+	[attr color_mask]
+		desc STRING "Color of Mask"
+		linkable BOOL TRUE
+	[attr enable_outline]
+		desc STRING ""
+		linkable BOOL FALSE
+	[attr color_outline]
+		desc STRING "Color of Mask"
+		linkable BOOL TRUE
+	[attr lambert_color]
+		desc STRING "Color of Mask"
+		linkable BOOL TRUE
+	[attr shadow_ramp]
+		desc STRING "Color of Mask"
+		linkable BOOL TRUE
+	[attr shadow_position]
+		min FLOAT 0.0
+		max FLOAT 1.0
+		desc STRING ""
+		linkable BOOL TRUE
+	[attr normal]
+		desc STRING ""
+		linkable BOOL FALSE
 	[attr sy_aov_sytoons_beauty]
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE

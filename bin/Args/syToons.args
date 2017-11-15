@@ -18,6 +18,7 @@
     <param label="Lambert Color" name="lambert_color" widget="color"/>
     <param label="Shadow Ramp" name="shadow_ramp" widget="color"/>
     <param label="Shadow Position" name="shadow_position" slider="True"/>
+    <param label="Normal" name="normal"/>
   </page>
   <page name="Optimization" open="True">
   <param label="Casting Light" name="casting_light" widget="checkBox"/>

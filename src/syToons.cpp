@@ -45,6 +45,7 @@ enum Params {
 	p_lambert_color,
 	p_shadow_ramp,
 	p_shadow_position,
+	p_normal,
 	p_casting_light,
 	p_casting_occlusion,
 	p_use_ramp_color,
@@ -72,6 +73,7 @@ node_parameters
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("shadow_ramp", 0.15f, 0.15f, 0.15f);
 	AiParameterFLT("shadow_position", 0.1f);
+	AiParameterVEC("normal", 1.0f, 1.0f, 1.0f);
 	AiParameterBool("casting_light", true);
 	AiParameterBool("casting_occlusion", false);
 	AiParameterBool("use_ramp_color", false);
@@ -92,12 +94,14 @@ node_parameters
 node_initialize
 {
 	ShaderData* data = new ShaderData();
+	data->hasChainedNormal = false;
 	AiNodeSetLocalData(node, data);
 }
 
 node_update
 {
 	ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
+	data->hasChainedNormal = AiNodeIsLinked(node, "normal");
 	// set up AOVs
 	REGISTER_AOVS_CUSTOM
 }
@@ -133,6 +137,11 @@ shader_evaluate
 	AtColor lighting_result = AI_RGB_WHITE;
 	AtColor shadow_result = AI_RGB_WHITE;
 	AtColor shadow_raw_result = AI_RGB_WHITE;
+
+	if (data->hasChainedNormal)
+	{
+		sg->Nf = sg->N = AiShaderEvalParamVec(p_normal);
+	}
 
 	// texture shading
 	texture_result = lerp(color_shadow,color_major,color_mask.r);

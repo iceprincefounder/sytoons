@@ -39,6 +39,10 @@
 			<label>Shadow Position</label>
 			<description></description>
 		</attribute>
+		<attribute name="normal" type="maya.float3">
+			<label>Normal</label>
+			<description></description>
+		</attribute>
 		<attribute name="casting_light" type="maya.bool">
 			<label>Casting Light</label>
 			<description></description>
@@ -115,6 +119,7 @@
 			<property name="lambert_color"/>
 			<property name="shadow_ramp"/>
 			<property name="shadow_position"/>
+			<property name="normal"/>
 			</group>
 			<group name="Optimization">
 				<label>Light Shading</label>
