@@ -1,5 +1,3 @@
-![sytoons_network](https://cdn.rawgit.com/iceprincefounder/sytoons/master/docs/images/sytoons_logo.png)
-
 Welcome to the sytoons wiki!
 ----
 
