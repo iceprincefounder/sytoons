@@ -290,8 +290,15 @@ shader_evaluate
 	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth].c_str(), depth);
 	if(casting_occlusion)
 	{
+		AtVector N = sg->Nf;
+		AtVector Ng = sg->Ngf;
+		float mint = 0.0f;
+		float maxt = 2000.0f;
+		float spread = 1.0f;
+		float falloff = 0.5f;
+		AtSampler * sampler = AiSampler(6,2);
 		AtVector Nbent;
-		AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&sg->N, &sg->Ng, sg, 0.0f, 2000.0f, 1.0f, 0.0f, AiSampler(8,2), &Nbent);
+		AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&N,&Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
 		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion].c_str(), occlusion);    		
 	}
 
