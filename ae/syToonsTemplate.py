@@ -23,6 +23,8 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.params["casting_occlusion"] = Param("casting_occlusion", "Casting Occlusion", "", "bool", presets=None)
 		self.params["use_ramp_color"] = Param("use_ramp_color", "Use Ramp Color", "", "bool", presets=None)
 
+		self.params["opacity"] = Param("opacity", "Opacity", "", "rgb", presets=None)
+
 		self.params["sy_aov_sytoons_beauty"] = Param("sy_aov_sytoons_beauty", "Aov syToons Beauty", "", "rgb", presets=None)
 		self.params["sy_aov_color_major"] = Param("sy_aov_color_major", "Aov Color Major", "", "rgb", presets=None)
 		self.params["sy_aov_color_shadow"] = Param("sy_aov_color_shadow", "Aov Color Shadow", "", "rgb", presets=None)
@@ -49,6 +51,8 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.addControl("enable_outline", label="Enable Outline", annotation="")
 		self.addControl("color_outline", label="Outline Color", annotation="")
 		self.endLayout() 
+
+		self.addControl("opacity", label="Opacity", annotation="")
 
 		self.beginLayout("Light Shading", collapse=False)
 		self.addControl("lambert_color", label="Lambert Color", annotation="")

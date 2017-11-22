@@ -43,6 +43,10 @@
 			<label>Normal</label>
 			<description></description>
 		</attribute>
+		<attribute name="opacity" type="maya.float3">
+			<label>Opacity</label>
+			<description></description>
+		</attribute>
 		<attribute name="casting_light" type="maya.bool">
 			<label>Casting Light</label>
 			<description></description>
@@ -121,6 +125,7 @@
 			<property name="shadow_position"/>
 			<property name="normal"/>
 			</group>
+			<property name="opacity"/>
 			<group name="Optimization">
 				<label>Light Shading</label>
 			<property name="casting_light"/>

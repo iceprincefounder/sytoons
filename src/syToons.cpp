@@ -46,6 +46,7 @@ enum Params {
 	p_shadow_ramp,
 	p_shadow_position,
 	p_normal,
+	p_opacity,
 	p_casting_light,
 	p_casting_occlusion,
 	p_use_ramp_color,
@@ -74,6 +75,7 @@ node_parameters
 	AiParameterRGB("shadow_ramp", 0.15f, 0.15f, 0.15f);
 	AiParameterFLT("shadow_position", 0.1f);
 	AiParameterVEC("normal", 1.0f, 1.0f, 1.0f);
+	AiParameterRGB("opacity", 1.0f, 1.0f, 1.0f);
 	AiParameterBool("casting_light", true);
 	AiParameterBool("casting_occlusion", false);
 	AiParameterBool("use_ramp_color", false);
@@ -132,6 +134,7 @@ shader_evaluate
 
 	// do shading
 	AtColor result = AI_RGB_BLACK;
+	AtColor result_opacity = AiShaderEvalParamRGB(p_opacity);
 	AtColor diffuse_raw = AI_RGB_BLACK;
 	AtColor texture_result = AI_RGB_BLACK;
 	AtColor lighting_result = AI_RGB_WHITE;
@@ -303,5 +306,6 @@ shader_evaluate
 	}
 
 	sg->out.RGB = result;
+	sg->out_opacity = result_opacity;
 }
 
