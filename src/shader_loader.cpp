@@ -20,12 +20,14 @@
 extern AtNodeMethods* syToonsMethods;
 extern AtNodeMethods* syRampMethods;
 extern AtNodeMethods* syRemapMethods;
+extern AtNodeMethods* syOutlineMethods;
 
 enum SHADERS
 {
    syToons,
    syRamp,
    syRemap,
+   syOutline,
 };
 
 node_loader
@@ -48,6 +50,12 @@ node_loader
          node->methods     = (AtNodeMethods*) syRemapMethods;
          node->output_type = AI_TYPE_RGB;
          node->name        = "syRemap";
+         node->node_type   = AI_NODE_SHADER;
+      break;
+      case syOutline:
+         node->methods     = (AtNodeMethods*) syOutlineMethods;
+         node->output_type = AI_TYPE_RGB;
+         node->name        = "syOutline";
          node->node_type   = AI_NODE_SHADER;
       break;
       default:

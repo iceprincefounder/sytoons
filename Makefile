@@ -18,4 +18,6 @@ shader2:
 	g++ -o ${OUT_PATH}tempShader2.os -c -fPIC -D_LINUX -I${ARNOLD_PATH}/include -I${INCLUDE_PATH} src/syRamp.cpp
 shader3:
 	g++ -o ${OUT_PATH}tempShader3.os -c -fPIC -D_LINUX -I${ARNOLD_PATH}/include -I${INCLUDE_PATH} src/syRemap.cpp
+shader4:
+	g++ -o ${OUT_PATH}tempShader4.os -c -fPIC -D_LINUX -I${ARNOLD_PATH}/include -I${INCLUDE_PATH} src/syOutline.cpp
 
