@@ -1,0 +1,11 @@
+<args format="1.0">
+<param name="input" label="Input" widget="color"/>
+<param name="gamma" label="Gamma" slider="True"/>
+<param name="saturation" label="Saturation" slider="True"/>
+<param name="hueOffset" label="Hue offset" slider="True" slidermin="-1.0" min="-1.0" slidercenter="0.0"/>
+<param name="contrast" label="Contrast" slider="True" min="0.001" max="10.0" slidermin="0" slidermax="10.0"/>
+<param name="contrastPivot" label="Contrast Pivot"/>
+<param name="gain" label="Gain" slider="True" min="0.001" max="3.0" slidermin="0" slidermax="3.0"/>
+<param name="exposure" label="Exposure" slider="True" slidermin="-10.0" slidermax="10.0"/>
+<param name="mask" label="Mask"/>
+</args>

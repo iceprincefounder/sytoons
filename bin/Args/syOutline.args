@@ -1,0 +1,15 @@
+<args format="1.0">
+  <page name="Texture Shading" open="True">
+    <param label="Color" name="color" widget="color"/>
+  </page>
+  <page name="Optimization" open="True">
+  <param label="Enable Occlusion" name="enable_occlusion" widget="checkBox"/>
+  </page>
+  <page name="AOVs" open="false">
+    <param label="sy_aov_outline" name="sy_aov_outline"/>
+    <param label="sy_aov_normal" name="sy_aov_normal"/>
+    <param label="sy_aov_fresnel" name="sy_aov_fresnel"/>
+    <param label="sy_aov_depth" name="sy_aov_depth"/>
+    <param label="sy_aov_occlusion" name="sy_aov_occlusion"/>
+  </page>
+</args>

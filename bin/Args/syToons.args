@@ -23,7 +23,7 @@
   <param label="Opacity" name="opacity" widget="color"/>
   <page name="Optimization" open="True">
   <param label="Casting Light" name="casting_light" widget="checkBox"/>
-  <param label="Casting Occlusion" name="casting_occlusion" widget="checkBox"/>
+  <param label="Enable Occlusion" name="enable_occlusion" widget="checkBox"/>
   <param label="Use Ramp Color" name="use_ramp_color" widget="checkBox"/>
   </page>
   <page name="AOVs" open="false">

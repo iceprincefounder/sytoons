@@ -4,9 +4,9 @@
 OUT_PATH = bin/
 INCLUDE_PATH=src/include
 ARNOLD_PATH = /mnt/work/software/arnold/arnold-4.2.11.3
-TEMP_PATH = ${OUT_PATH}tempShader1.os ${OUT_PATH}tempShader2.os ${OUT_PATH}tempShader3.os ${OUT_PATH}loader.os
+TEMP_PATH = ${OUT_PATH}tempShader1.os ${OUT_PATH}tempShader2.os ${OUT_PATH}tempShader3.os ${OUT_PATH}tempShader4.os ${OUT_PATH}loader.os
 
-all:loader shader1 shader2 shader3
+all:loader shader1 shader2 shader3 shader4
 	g++ -o ${OUT_PATH}sytoons.so -shared ${TEMP_PATH} -I${INCLUDE_PATH} -L${ARNOLD_PATH}/bin -lai
 	@echo -e '\033[0;33m'"Done!"'\033[0m'
 loader:

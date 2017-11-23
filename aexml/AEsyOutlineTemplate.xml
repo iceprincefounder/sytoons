@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<templates>
+	<template name="AEsyOutline">
+		<label>syOutline</label>
+		<description>...</description>
+		<attribute name="color" type="maya.float3">
+			<label>Color</label>
+			<description></description>
+		</attribute>
+		<attribute name="sy_aov_outline" type="maya.float3">
+			<label>Aov Outline</label>
+			<description></description>
+		</attribute>
+		<attribute name="sy_aov_normal" type="maya.float3">
+			<label>Aov Normal</label>
+			<description></description>
+		</attribute>
+		<attribute name="sy_aov_fresnel" type="maya.float3">
+			<label>Aov Fresnel</label>
+			<description></description>
+		</attribute>
+		<attribute name="sy_aov_depth" type="maya.float3">
+			<label>Aov Depth</label>
+			<description></description>
+		</attribute>
+		<attribute name="enable_occlusion" type="maya.bool">
+			<label>Enable Occlusion</label>
+			<description></description>
+		</attribute>
+		<attribute name="sy_aov_occlusion" type="maya.float3">
+			<label>Aov Occlusion</label>
+			<description></description>
+		</attribute>
+	</template>
+		<view name="Lookdev" template="AEsyOutline">
+			<group name="Outline">
+				<label>Outline</label>
+			<property name="color"/>
+			</group>
+			<group name="Optimization">
+				<label>Outline</label>
+			<property name="enable_occlusion"/>
+			</group>
+			<group name="AOVs">
+				<label>AOVs</label>
+			<property name="sy_aov_outline"/>
+			<property name="sy_aov_normal"/>
+			<property name="sy_aov_fresnel"/>
+			<property name="sy_aov_depth"/>
+			<property name="sy_aov_occlusion"/>
+			</group>
+		</view>
+</templates>

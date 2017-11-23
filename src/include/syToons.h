@@ -38,7 +38,7 @@ for (size_t i=0; i < data->aovs_custom.size(); ++i) \
 	AiAOVRegister(data->aovs_custom[i].c_str(), AI_TYPE_RGB, AI_AOV_BLEND_OPACITY);
 #endif
 
-enum AovIndices
+enum AovIndicesToons
 {
 	k_sy_aov_sytoons_beauty = 0,
 	k_sy_aov_color_major,
@@ -54,7 +54,7 @@ enum AovIndices
 };
 
 
-struct ShaderData
+struct ShaderDataToons
 {
     bool hasChainedNormal;
     // AOV names

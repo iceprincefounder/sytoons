@@ -15,42 +15,42 @@
 #include <ai.h>
 #include <cstring>
 
-#include <kt_util.h>
+#include <syOutline.h>
 
 AI_SHADER_NODE_EXPORT_METHODS(syOutlineMethods);
 
 
 
 enum Params {
-	p_color_major,
-	p_casting_occlusion,
+	p_color,
+	p_sy_aov_outline,
 	p_sy_aov_normal,
 	p_sy_aov_fresnel,
 	p_sy_aov_depth,
+	p_enable_occlusion,
 	p_sy_aov_occlusion,
 };
 
 node_parameters
 {
-	AiParameterRGB("color_major", 1.0f, 1.0f, 1.0f);
-	AiParameterBool("casting_occlusion", false);
+	AiParameterRGB("color", 1.0f, 0.15f, 0.0f);
+	AiParameterStr("sy_aov_outline", "sy_aov_outline");
 	AiParameterStr("sy_aov_normal", "sy_aov_normal");
 	AiParameterStr("sy_aov_fresnel", "sy_aov_fresnel");
 	AiParameterStr("sy_aov_depth", "sy_aov_depth");
+	AiParameterBool("enable_occlusion", false);
 	AiParameterStr("sy_aov_occlusion", "sy_aov_occlusion");
 }
 
 node_initialize
 {
-	ShaderData* data = new ShaderData();
-	data->hasChainedNormal = false;
+	ShaderDataOutline* data = new ShaderDataOutline();
 	AiNodeSetLocalData(node, data);
 }
 
 node_update
 {
-	ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
-	data->hasChainedNormal = AiNodeIsLinked(node, "normal");
+	ShaderDataOutline* data = (ShaderDataOutline*)AiNodeGetLocalData(node);
 	// set up AOVs
 	REGISTER_AOVS_CUSTOM
 }
@@ -59,7 +59,7 @@ node_finish
 {
 	if (AiNodeGetLocalData(node))
 	{
-		ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
+		ShaderDataOutline* data = (ShaderDataOutline*)AiNodeGetLocalData(node);
 		AiNodeSetLocalData(node, NULL);
 		delete data;
 	}
@@ -67,10 +67,10 @@ node_finish
 
 shader_evaluate
 {
-	ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
+	ShaderDataOutline* data = (ShaderDataOutline*)AiNodeGetLocalData(node);
 	// we provide two shading engine,traditional scanline and GI engine raytrace.
-	AtColor color_major = AiShaderEvalParamRGB(p_color_major);
-	bool casting_occlusion = AiShaderEvalParamBool(p_casting_occlusion);
+	AtColor color = AiShaderEvalParamRGB(p_color);
+	bool enable_occlusion = AiShaderEvalParamBool(p_enable_occlusion);
 	// caculate normal aov
 	AtColor normal = AiColor(sg->N.x,sg->N.y,sg->N.z);
 	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal].c_str(), normal);
@@ -81,7 +81,7 @@ shader_evaluate
 	AtColor depth = AiColor(sg->Rl);
 	// caculate occlusion aov
 	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth].c_str(), depth);
-	if(casting_occlusion)
+	if(enable_occlusion)
 	{
 		AtVector N = sg->Nf;
 		AtVector Ng = sg->Ngf;
@@ -94,7 +94,8 @@ shader_evaluate
 		AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&N,&Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
 		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion].c_str(), occlusion);    		
 	}
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline].c_str(), color);
 
-	sg->out.RGB = color_major;
+	sg->out.RGB = color;
 }
 

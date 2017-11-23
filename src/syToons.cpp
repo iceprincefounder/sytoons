@@ -16,7 +16,7 @@
 #include <cstring>
 
 #include <al_util.h>
-#include <kt_util.h>
+#include <syToons.h>
 
 
 AI_SHADER_NODE_EXPORT_METHODS(syToonsMethods);
@@ -48,7 +48,7 @@ enum Params {
 	p_normal,
 	p_opacity,
 	p_casting_light,
-	p_casting_occlusion,
+	p_enable_occlusion,
 	p_use_ramp_color,
 	p_sy_aov_sytoons_beauty,
 	p_sy_aov_color_major,
@@ -77,7 +77,7 @@ node_parameters
 	AiParameterVEC("normal", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("opacity", 1.0f, 1.0f, 1.0f);
 	AiParameterBool("casting_light", true);
-	AiParameterBool("casting_occlusion", false);
+	AiParameterBool("enable_occlusion", false);
 	AiParameterBool("use_ramp_color", false);
 
 	AiParameterStr("sy_aov_sytoons_beauty", "sy_aov_sytoons_beauty");
@@ -95,14 +95,14 @@ node_parameters
 
 node_initialize
 {
-	ShaderData* data = new ShaderData();
+	ShaderDataToons* data = new ShaderDataToons();
 	data->hasChainedNormal = false;
 	AiNodeSetLocalData(node, data);
 }
 
 node_update
 {
-	ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
+	ShaderDataToons* data = (ShaderDataToons*)AiNodeGetLocalData(node);
 	data->hasChainedNormal = AiNodeIsLinked(node, "normal");
 	// set up AOVs
 	REGISTER_AOVS_CUSTOM
@@ -112,7 +112,7 @@ node_finish
 {
 	if (AiNodeGetLocalData(node))
 	{
-		ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
+		ShaderDataToons* data = (ShaderDataToons*)AiNodeGetLocalData(node);
 		AiNodeSetLocalData(node, NULL);
 		delete data;
 	}
@@ -120,7 +120,7 @@ node_finish
 
 shader_evaluate
 {
-	ShaderData* data = (ShaderData*)AiNodeGetLocalData(node);
+	ShaderDataToons* data = (ShaderDataToons*)AiNodeGetLocalData(node);
 	// we provide two shading engine,traditional scanline and GI engine raytrace.
 	int shading_engine = AiShaderEvalParamInt(p_engine);
 	AtColor color_major = AiShaderEvalParamRGB(p_color_major);
@@ -129,7 +129,7 @@ shader_evaluate
 	AtColor color_outline = AiShaderEvalParamRGB(p_color_outline);
 	bool enable_outline = AiShaderEvalParamBool(p_enable_outline);	
 	bool casting_light = AiShaderEvalParamBool(p_casting_light);
-	bool casting_occlusion = AiShaderEvalParamBool(p_casting_occlusion);
+	bool enable_occlusion = AiShaderEvalParamBool(p_enable_occlusion);
 	bool use_ramp_color = AiShaderEvalParamBool(p_use_ramp_color);
 
 	// do shading
@@ -291,7 +291,7 @@ shader_evaluate
 	AtColor depth = AiColor(sg->Rl);
 	// caculate occlusion aov
 	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth].c_str(), depth);
-	if(casting_occlusion)
+	if(enable_occlusion)
 	{
 		AtVector N = sg->Nf;
 		AtVector Ng = sg->Ngf;
@@ -304,7 +304,6 @@ shader_evaluate
 		AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&N,&Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
 		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion].c_str(), occlusion);    		
 	}
-
 	sg->out.RGB = result;
 	sg->out_opacity = result_opacity;
 }

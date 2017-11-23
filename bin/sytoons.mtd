@@ -2,7 +2,6 @@
 	desc STRING ""
 	maya.name STRING "syToons"
 	maya.classification STRING "shader/surface"
-	maya.id INT 0x17000001
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
 	[attr engine]
@@ -21,13 +20,13 @@
 		desc STRING ""
 		linkable BOOL FALSE
 	[attr color_outline]
-		desc STRING "Color of Mask"
+		desc STRING ""
 		linkable BOOL TRUE
 	[attr lambert_color]
-		desc STRING "Color of Mask"
+		desc STRING ""
 		linkable BOOL TRUE
 	[attr shadow_ramp]
-		desc STRING "Color of Mask"
+		desc STRING ""
 		linkable BOOL TRUE
 	[attr shadow_position]
 		min FLOAT 0.0
@@ -82,11 +81,41 @@
 		aov.enable_composition BOOL TRUE
 		default STRING "sy_aov_occlusion"
 
+[node syOutline]
+	desc STRING ""
+	maya.name STRING "syOutline"
+	maya.classification STRING "shader/surface"
+	maya.output_name STRING "outColor"
+	maya.output_shortname STRING "out"
+	[attr color]
+		desc STRING "Color"
+		linkable BOOL TRUE
+	[attr sy_aov_outline]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_outline"
+	[attr sy_aov_normal]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_normal"
+	[attr sy_aov_fresnel]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_fresnel"
+	[attr sy_aov_depth]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_depth"
+	[attr sy_aov_occlusion]
+		aov.type INT 0x05
+		aov.enable_composition BOOL TRUE
+		default STRING "sy_aov_occlusion"
+
+
 [node syRamp]
 	desc STRING ""
 	maya.name STRING "syRamp"
 	maya.classification STRING "utility/color"
-	maya.id INT 0x17000002
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
 
@@ -94,7 +123,6 @@
 	desc STRING ""
 	maya.name STRING "syRemap"
 	maya.classification STRING "utility/color"
-	maya.id INT 0x17000003
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
 

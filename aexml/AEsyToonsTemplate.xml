@@ -51,8 +51,8 @@
 			<label>Casting Light</label>
 			<description></description>
 		</attribute>
-		<attribute name="casting_occlusion" type="maya.bool">
-			<label>Casting Occlusion</label>
+		<attribute name="enable_occlusion" type="maya.bool">
+			<label>Enable Occlusion</label>
 			<description></description>
 		</attribute>
 		<attribute name="use_ramp_color" type="maya.bool">
@@ -129,7 +129,7 @@
 			<group name="Optimization">
 				<label>Light Shading</label>
 			<property name="casting_light"/>
-			<property name="casting_occlusion"/>
+			<property name="enable_occlusion"/>
 			<property name="use_ramp_color"/>
 			</group>
 			<group name="AOVs">

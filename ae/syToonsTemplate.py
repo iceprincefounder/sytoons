@@ -20,7 +20,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.params["normal"] = Param("normal", "Normal", "", "vector", presets=None)
 
 		self.params["casting_light"] = Param("casting_light", "Casting Light ", "", "bool", presets=None)
-		self.params["casting_occlusion"] = Param("casting_occlusion", "Casting Occlusion", "", "bool", presets=None)
+		self.params["enable_occlusion"] = Param("enable_occlusion", "Enable Occlusion", "", "bool", presets=None)
 		self.params["use_ramp_color"] = Param("use_ramp_color", "Use Ramp Color", "", "bool", presets=None)
 
 		self.params["opacity"] = Param("opacity", "Opacity", "", "rgb", presets=None)
@@ -52,7 +52,6 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.addControl("color_outline", label="Outline Color", annotation="")
 		self.endLayout() 
 
-		self.addControl("opacity", label="Opacity", annotation="")
 
 		self.beginLayout("Light Shading", collapse=False)
 		self.addControl("lambert_color", label="Lambert Color", annotation="")
@@ -61,10 +60,14 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.addControl("normal", label="Normal", annotation="")
 		self.endLayout()
 
+		self.addControl("opacity", label="Opacity", annotation="")
+
 		self.beginLayout("Optimization", collapse=False)
+		self.beginNoOptimize()
 		self.addControl("casting_light", label="Casting Light", annotation="")
-		self.addControl("casting_occlusion", label="Casting Occlusion", annotation="")
+		self.addControl("enable_occlusion", label="Enable Occlusion", annotation="")
 		self.addControl("use_ramp_color", label="Use Ramp Color", annotation="")
+		self.endNoOptimize()
 		self.endLayout()
 
 		self.beginLayout("AOVs", collapse=True)
