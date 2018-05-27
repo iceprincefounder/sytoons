@@ -18,24 +18,27 @@
 #include <math.h>
 #include <cassert>
 
+#define NUM_AOVs 11
 
 #ifndef REGISTER_AOVS_CUSTOM
-#define REGISTER_AOVS_CUSTOM \
-data->aovs_custom.clear(); \
-data->aovs_custom.push_back(params[p_sy_aov_sytoons_beauty].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_color_major].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_color_shadow].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_color_mask].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_outline].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_dynamic_shadow].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_dynamic_shadow_raw].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_normal].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_fresnel].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_depth].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_occlusion].STR); \
-assert(data->aovs_custom.size() == 11 && "NUM_AOVs does not match size of aovs array!"); \
-for (size_t i=0; i < data->aovs_custom.size(); ++i) \
-	AiAOVRegister(data->aovs_custom[i].c_str(), AI_TYPE_RGB, AI_AOV_BLEND_OPACITY);
+#define REGISTER_AOVS_CUSTOM                                                  \
+    data->aovs.clear();                                                       \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_sytoons_beauty"));        \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_color_major"));           \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_color_shadow"));          \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_color_mask"));            \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_outline"));               \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_dynamic_shadow"));        \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_dynamic_shadow_raw"));    \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_normal"));                \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_fresnel"));               \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_depth"));                 \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_occlusion"));             \
+    assert(NUM_AOVs == data->aovs.size() &&                                   \
+           "NUM_AOVs does not match size of aovs array!");                    \
+    for (size_t i = 0; i < data->aovs.size(); ++i)                            \
+        AiAOVRegister(data->aovs[i].c_str(), AI_TYPE_RGB,                     \
+                      AI_AOV_BLEND_OPACITY);                           
 #endif
 
 enum AovIndicesToons
@@ -58,9 +61,9 @@ struct ShaderDataToons
 {
     bool hasChainedNormal;
     // AOV names
-    std::vector<std::string> aovs;
-    std::vector<std::string> aovs_rgba;
-    std::vector<std::string> aovs_custom;
+    std::vector<AtString> aovs;
+    std::vector<AtString> aovs_rgba;
+    std::vector<AtString> aovs_custom;
 };
 
 #define LUT_SIZE 32
@@ -77,6 +80,23 @@ enum RampInterpolationType
    RIT_BUMP,
    RIT_SPIKE
 };
+
+const char* RampInterpolationNames[] =
+{
+   "none",
+   "linear",
+   "exponentialup",
+   "exponentialdown",
+   "smooth",
+   "bump",
+   "spike",
+   NULL
+};
+
+RampInterpolationType RampInterpolationNameToType(const char *n)
+{
+   return (RampInterpolationType) AiEnumGetValue(RampInterpolationNames, n);
+}
 
 bool getMayaRampArrays(AtNode* node, const char* paramName, AtArray** positions, AtArray** colors, RampInterpolationType* interp)
 {
@@ -107,15 +127,15 @@ bool SortFloatIndexArray(AtArray *a, unsigned int *shuffle)
 {
    bool modified = false;
 
-   if (a && shuffle && a->nelements > 0)
+   if (a && shuffle && AiArrayGetNumElements(a) > 0)
    {
       float p0, p1;
       int tmp;
 
       bool swapped = true;
-      AtUInt32 n = a->nelements;
+      uint32_t n = AiArrayGetNumElements(a);
 
-      for (AtUInt32 i = 0; (i < n); ++i)
+      for (uint32_t i = 0; (i < n); ++i)
       {
          shuffle[i] = i;
       }
@@ -124,7 +144,7 @@ bool SortFloatIndexArray(AtArray *a, unsigned int *shuffle)
       {
          swapped = false;
          n -= 1;
-         for (AtUInt32 i = 0; (i < n); ++i)
+         for (uint32_t i = 0; (i < n); ++i)
          {
             p0 = AiArrayGetFlt(a, shuffle[i]);
             p1 = AiArrayGetFlt(a, shuffle[i + 1]);
@@ -143,6 +163,7 @@ bool SortFloatIndexArray(AtArray *a, unsigned int *shuffle)
 
    return modified;
 }
+
 
 // This one is defined for the RampT template function to work properly
 float RampLuminance(float v)
@@ -175,13 +196,12 @@ AtRGBA Mix(const AtRGBA &c0, const AtRGBA &c1, float t)
    return rv;
 }
 
-
 template <typename ValType>
-void RampT(AtArray *p, AtArray *c, float t, RampInterpolationType it, ValType &result, ValType (*getv)(AtArray*, unsigned int), unsigned int *shuffle)
+void RampT(AtArray *p, AtArray *c, float t, RampInterpolationType it, ValType &result, ValType (*getv)(AtArray*, unsigned int), const unsigned int *shuffle)
 {
-   unsigned int inext = p->nelements;
+   unsigned int inext = AiArrayGetNumElements(p);
 
-   for (unsigned int i = 0; (i < p->nelements); ++i)
+   for (unsigned int i = 0; (i < AiArrayGetNumElements(p)); ++i)
    {
       if (t < AiArrayGetFlt(p, shuffle[i]))
       {
@@ -190,9 +210,9 @@ void RampT(AtArray *p, AtArray *c, float t, RampInterpolationType it, ValType &r
       }
    }
 
-   if (inext >= p->nelements)
+   if (inext >= AiArrayGetNumElements(p))
    {
-      result = getv(c, shuffle[p->nelements - 1]);
+      result = getv(c, shuffle[AiArrayGetNumElements(p) - 1]);
       return;
    }
 
@@ -259,6 +279,7 @@ void RampT(AtArray *p, AtArray *c, float t, RampInterpolationType it, ValType &r
    result = Mix(ccur, cnext, u);
 }
 
+
 float _GetArrayFlt(AtArray *a, unsigned int i)
 {
    return AiArrayGetFlt(a, i);
@@ -269,36 +290,37 @@ AtRGB _GetArrayRGB(AtArray *a, unsigned int i)
    return AiArrayGetRGB(a, i);
 }
 
-void Ramp(AtArray *p, AtArray *v, float t, RampInterpolationType it, float &out, unsigned int *shuffle)
+void Ramp(AtArray *p, AtArray *v, float t, RampInterpolationType it, float &out, const unsigned int *shuffle)
 {
    RampT(p, v, t, it, out, _GetArrayFlt, shuffle);
 }
 
-void Ramp(AtArray *p, AtArray *v, float t, RampInterpolationType it, AtRGB &out, unsigned int *shuffle)
+void Ramp(AtArray *p, AtArray *v, float t, RampInterpolationType it, AtRGB &out, const unsigned int *shuffle)
 {
    RampT(p, v, t, it, out, _GetArrayRGB, shuffle);
 }
 
-void generateRampLUT(AtArray* positions, AtArray* colors, RampInterpolationType interp, AtRGB* lut)
-{
-    unsigned int* shuffle = new unsigned int[positions->nelements];
-    SortFloatIndexArray(positions, shuffle);
-    for (int i=0; i < LUT_SIZE; ++i)
-    {
-        float t = float(i)/float(LUT_SIZE-1);
-        Ramp(positions, colors, t, interp, lut[i], shuffle);
-    }
-
-    delete[] shuffle;
-}
-
-AtRGB rampLUTLookup(AtRGB* lut, float t)
-{
-    float tt = clamp(t*(LUT_SIZE-1), 0.0f, float(LUT_SIZE-1));
-    int i = int(tt);
-    int in = std::min(i+1, LUT_SIZE-1);
-    tt -= float(i);
-    return lerp(lut[i], lut[in], tt);
-}
-
 } // ending namespace kt
+
+// void generateRampLUT(AtArray* positions, AtArray* colors, RampInterpolationType interp, AtRGB* lut)
+// {
+//     unsigned int* shuffle = new unsigned int[positions->nelements];
+//     SortFloatIndexArray(positions, shuffle);
+//     for (int i=0; i < LUT_SIZE; ++i)
+//     {
+//         float t = float(i)/float(LUT_SIZE-1);
+//         Ramp(positions, colors, t, interp, lut[i], shuffle);
+//     }
+
+//     delete[] shuffle;
+// }
+
+// AtRGB rampLUTLookup(AtRGB* lut, float t)
+// {
+//     float tt = clamp(t*(LUT_SIZE-1), 0.0f, float(LUT_SIZE-1));
+//     int i = int(tt);
+//     int in = std::min(i+1, LUT_SIZE-1);
+//     tt -= float(i);
+//     return lerp(lut[i], lut[in], tt);
+// }
+
