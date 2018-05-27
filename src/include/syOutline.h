@@ -13,23 +13,28 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 #pragma once
+#include <ai.h>
 #include <vector>
 #include <string>
 #include <math.h>
 #include <cassert>
 
+#define NUM_AOVs 5
 
 #ifndef REGISTER_AOVS_CUSTOM
-#define REGISTER_AOVS_CUSTOM \
-data->aovs_custom.clear(); \
-data->aovs_custom.push_back(params[p_sy_aov_outline].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_normal].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_fresnel].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_depth].STR); \
-data->aovs_custom.push_back(params[p_sy_aov_occlusion].STR); \
-assert(data->aovs_custom.size() == 5 && "NUM_AOVs does not match size of aovs array!"); \
-for (size_t i=0; i < data->aovs_custom.size(); ++i) \
-	AiAOVRegister(data->aovs_custom[i].c_str(), AI_TYPE_RGB, AI_AOV_BLEND_OPACITY);
+#define REGISTER_AOVS_CUSTOM                                                  \
+    data->aovs.clear();                                                \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_outline"));        \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_normal"));         \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_fresnel"));        \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_depth"));          \
+    data->aovs.push_back(AiNodeGetStr(node, "sy_aov_occlusion"));      \
+    assert(NUM_AOVs == data->aovs.size() &&                            \
+           "NUM_AOVs does not match size of aovs array!");             \
+    for (size_t i = 0; i < data->aovs.size(); ++i)                     \
+        AiAOVRegister(data->aovs[i].c_str(), AI_TYPE_RGB,              \
+                      AI_AOV_BLEND_OPACITY);                           
+
 #endif
 
 enum AovIndicesOutline
@@ -44,7 +49,7 @@ enum AovIndicesOutline
 struct ShaderDataOutline
 {
     // AOV names
-    std::vector<std::string> aovs;
-    std::vector<std::string> aovs_rgba;
-    std::vector<std::string> aovs_custom;
+    std::vector<AtString> aovs;
+    std::vector<AtString> aovs_rgba;
+    std::vector<AtString> aovs_custom;
 };

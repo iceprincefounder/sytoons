@@ -69,33 +69,46 @@ shader_evaluate
 {
 	ShaderDataOutline* data = (ShaderDataOutline*)AiNodeGetLocalData(node);
 	// we provide two shading engine,traditional scanline and GI engine raytrace.
-	AtColor color = AiShaderEvalParamRGB(p_color);
+	AtRGB color = AiShaderEvalParamRGB(p_color);
 	bool enable_occlusion = AiShaderEvalParamBool(p_enable_occlusion);
 	// caculate normal aov
-	AtColor normal = AiColor(sg->N.x,sg->N.y,sg->N.z);
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal].c_str(), normal);
+	AtRGB normal = AtRGB(sg->N.x,sg->N.y,sg->N.z);
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal], normal);
 	// caculate facingratio aov
-	AtColor fresnel = AiColor(1-AiV3Dot(sg->Nf, -sg->Rd));
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_fresnel].c_str(), fresnel);
+	AtRGB fresnel = AtRGB(1-AiV3Dot(sg->Nf, -sg->Rd));
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_fresnel], fresnel);
 	// caculate depth aov
-	AtColor depth = AiColor(sg->Rl);
+	AtRGB depth = AtRGB(sg->Rl);
 	// caculate occlusion aov
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth].c_str(), depth);
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth], depth);
 	if(enable_occlusion)
 	{
+
 		AtVector N = sg->Nf;
 		AtVector Ng = sg->Ngf;
+		AtVector Ns = sg->Ns;
+
 		float mint = 0.0f;
 		float maxt = 2000.0f;
 		float spread = 1.0f;
 		float falloff = 0.5f;
-		AtSampler * sampler = AiSampler(6,2);
-		AtVector Nbent;
-		AtColor occlusion = AI_RGB_WHITE-AiOcclusion(&N,&Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
-		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion].c_str(), occlusion);    		
-	}
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline].c_str(), color);
+		float ndim = 2.0f;
+		float nsamples = 4.0f;
 
-	sg->out.RGB = color;
+		static const uint32_t seed = static_cast<uint32_t>(AiNodeEntryGetNameAtString(AiNodeGetNodeEntry(node)).hash());
+		AtSampler* sampler = AiSampler(seed, nsamples, ndim);
+		AtVector Nbent = AtVector(1,1,1);
+
+		// caculate occlusion,if falloff equal to zero,maya would crash
+		if(falloff <= 0)
+		    falloff = 0.001;
+		AtRGB occlusion = AI_RGB_WHITE - AiOcclusion(N,Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
+
+
+		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion], occlusion);    		
+	}
+	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline], color);
+
+	sg->out.RGB() = color;
 }
 

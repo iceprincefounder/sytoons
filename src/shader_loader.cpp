@@ -17,16 +17,16 @@
 #include <iostream>
 #include <cstring>
 
-extern AtNodeMethods* syToonsMethods;
-extern AtNodeMethods* syRampMethods;
-extern AtNodeMethods* syRemapMethods;
-extern AtNodeMethods* syOutlineMethods;
+// extern AtNodeMethods* syToonsMethods;
+// extern AtNodeMethods* syRampMethods;
+// extern AtNodeMethods* syRemapMethods;
+extern const AtNodeMethods  *syOutlineMethods;
 
 enum SHADERS
 {
-   syToons,
-   syRamp,
-   syRemap,
+   // syToons,
+   // syRamp,
+   // syRemap,
    syOutline,
 };
 
@@ -34,24 +34,24 @@ node_loader
 {
    switch (i) 
    {     
-      case syToons:
-         node->methods     = (AtNodeMethods*) syToonsMethods;
-         node->output_type = AI_TYPE_RGB;
-         node->name        = "syToons";
-         node->node_type   = AI_NODE_SHADER;
-      break;
-      case syRamp:
-         node->methods     = (AtNodeMethods*) syRampMethods;
-         node->output_type = AI_TYPE_RGB;
-         node->name        = "syRamp";
-         node->node_type   = AI_NODE_SHADER;
-      break;
-      case syRemap:
-         node->methods     = (AtNodeMethods*) syRemapMethods;
-         node->output_type = AI_TYPE_RGB;
-         node->name        = "syRemap";
-         node->node_type   = AI_NODE_SHADER;
-      break;
+      // case syToons:
+      //    node->methods     = (AtNodeMethods*) syToonsMethods;
+      //    node->output_type = AI_TYPE_RGB;
+      //    node->name        = "syToons";
+      //    node->node_type   = AI_NODE_SHADER;
+      // break;
+      // case syRamp:
+      //    node->methods     = (AtNodeMethods*) syRampMethods;
+      //    node->output_type = AI_TYPE_RGB;
+      //    node->name        = "syRamp";
+      //    node->node_type   = AI_NODE_SHADER;
+      // break;
+      // case syRemap:
+      //    node->methods     = (AtNodeMethods*) syRemapMethods;
+      //    node->output_type = AI_TYPE_RGB;
+      //    node->name        = "syRemap";
+      //    node->node_type   = AI_NODE_SHADER;
+      // break;
       case syOutline:
          node->methods     = (AtNodeMethods*) syOutlineMethods;
          node->output_type = AI_TYPE_RGB;
