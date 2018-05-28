@@ -35,6 +35,10 @@
 			<label>Shadow Ramp</label>
 			<description></description>
 		</attribute>
+		<attribute name="shadow_mask" type="maya.float3">
+			<label>Shadow Mask</label>
+			<description></description>
+		</attribute>
 		<attribute name="shadow_position" type="maya.float">
 			<label>Shadow Position</label>
 			<description></description>
@@ -122,6 +126,7 @@
 				<label>Light Shading</label>
 			<property name="lambert_color"/>
 			<property name="shadow_ramp"/>
+			<property name="shadow_mask"/>
 			<property name="shadow_position"/>
 			<property name="normal"/>
 			</group>

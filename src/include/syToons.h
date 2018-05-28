@@ -62,8 +62,6 @@ struct ShaderDataToons
     bool hasChainedNormal;
     // AOV names
     std::vector<AtString> aovs;
-    std::vector<AtString> aovs_rgba;
-    std::vector<AtString> aovs_custom;
 };
 
 #define LUT_SIZE 32

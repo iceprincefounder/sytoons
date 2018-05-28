@@ -1,9 +1,10 @@
 [node syToons]
-	desc STRING ""
 	maya.name STRING "syToons"
+	maya.id INT 0x0012d340
 	maya.classification STRING "shader/surface"
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
+	desc STRING "syToons Shader Library" 
 	[attr engine]
 		desc STRING ""
 		linkable BOOL FALSE
@@ -80,13 +81,13 @@
 		aov.type INT 0x05
 		aov.enable_composition BOOL TRUE
 		default STRING "sy_aov_occlusion"
-
 [node syOutline]
-	desc STRING ""
 	maya.name STRING "syOutline"
+	maya.id INT 0x0012d341
 	maya.classification STRING "shader/surface"
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
+	desc STRING "syToons Shader Library"
 	[attr color]
 		desc STRING "Color"
 		linkable BOOL TRUE

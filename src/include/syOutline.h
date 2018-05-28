@@ -19,17 +19,15 @@
 #include <math.h>
 #include <cassert>
 
-#define NUM_AOVs 5
-
 #ifndef REGISTER_AOVS_CUSTOM
-#define REGISTER_AOVS_CUSTOM                                                  \
+#define REGISTER_AOVS_CUSTOM                                           \
     data->aovs.clear();                                                \
     data->aovs.push_back(AiNodeGetStr(node, "sy_aov_outline"));        \
     data->aovs.push_back(AiNodeGetStr(node, "sy_aov_normal"));         \
     data->aovs.push_back(AiNodeGetStr(node, "sy_aov_fresnel"));        \
     data->aovs.push_back(AiNodeGetStr(node, "sy_aov_depth"));          \
     data->aovs.push_back(AiNodeGetStr(node, "sy_aov_occlusion"));      \
-    assert(NUM_AOVs == data->aovs.size() &&                            \
+    assert(data->aovs.size() == 5 &&                                   \
            "NUM_AOVs does not match size of aovs array!");             \
     for (size_t i = 0; i < data->aovs.size(); ++i)                     \
         AiAOVRegister(data->aovs[i].c_str(), AI_TYPE_RGB,              \
@@ -50,6 +48,4 @@ struct ShaderDataOutline
 {
     // AOV names
     std::vector<AtString> aovs;
-    std::vector<AtString> aovs_rgba;
-    std::vector<AtString> aovs_custom;
 };

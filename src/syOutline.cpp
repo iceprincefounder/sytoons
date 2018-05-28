@@ -73,14 +73,14 @@ shader_evaluate
 	bool enable_occlusion = AiShaderEvalParamBool(p_enable_occlusion);
 	// caculate normal aov
 	AtRGB normal = AtRGB(sg->N.x,sg->N.y,sg->N.z);
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal], normal);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_normal], normal);
 	// caculate facingratio aov
 	AtRGB fresnel = AtRGB(1-AiV3Dot(sg->Nf, -sg->Rd));
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_fresnel], fresnel);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_fresnel], fresnel);
 	// caculate depth aov
 	AtRGB depth = AtRGB(sg->Rl);
 	// caculate occlusion aov
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth], depth);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_depth], depth);
 	if(enable_occlusion)
 	{
 
@@ -89,25 +89,24 @@ shader_evaluate
 		AtVector Ns = sg->Ns;
 
 		float mint = 0.0f;
-		float maxt = 2000.0f;
+		float maxt = 2.0f;
 		float spread = 1.0f;
 		float falloff = 0.5f;
 		float ndim = 2.0f;
 		float nsamples = 4.0f;
 
 		static const uint32_t seed = static_cast<uint32_t>(AiNodeEntryGetNameAtString(AiNodeGetNodeEntry(node)).hash());
-		AtSampler* sampler = AiSampler(seed, nsamples, ndim);
+		const AtSampler* sampler = AiSampler(seed, nsamples, ndim);
 		AtVector Nbent = AtVector(1,1,1);
 
 		// caculate occlusion,if falloff equal to zero,maya would crash
 		if(falloff <= 0)
-		    falloff = 0.001;
+	    falloff = 0.001;
 		AtRGB occlusion = AI_RGB_WHITE - AiOcclusion(N,Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
 
-
-		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion], occlusion);    		
+		AiAOVSetRGB(sg, data->aovs[k_sy_aov_occlusion], occlusion);    		
 	}
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline], color);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_outline], color);
 
 	sg->out.RGB() = color;
 }

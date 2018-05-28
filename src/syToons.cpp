@@ -44,6 +44,7 @@ enum Params {
 	p_color_outline,
 	p_lambert_color,
 	p_shadow_ramp,
+	p_shadow_mask,
 	p_shadow_position,
 	p_normal,
 	p_opacity,
@@ -73,6 +74,7 @@ node_parameters
 	AiParameterRGB("color_outline", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("shadow_ramp", 0.15f, 0.15f, 0.15f);
+	AiParameterRGB("shadow_mask", 1.0f, 1.0f, 1.0f);
 	AiParameterFlt("shadow_position", 0.1f);
 	AiParameterVec("normal", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("opacity", 1.0f, 1.0f, 1.0f);
@@ -131,7 +133,7 @@ shader_evaluate
 	bool casting_light = AiShaderEvalParamBool(p_casting_light);
 	bool enable_occlusion = AiShaderEvalParamBool(p_enable_occlusion);
 	bool use_ramp_color = AiShaderEvalParamBool(p_use_ramp_color);
-
+	AtRGB shadow_mask = AiShaderEvalParamRGB(p_shadow_mask);
 	// do shading
 	AtRGB result = AI_RGB_ZERO;
 	AtRGB result_opacity = AiShaderEvalParamRGB(p_opacity);
@@ -219,9 +221,9 @@ shader_evaluate
 
 			// result
 			if(use_ramp_color)
-				result = texture_result*shadow_result;
+				result = lerp(texture_result,texture_result*shadow_result,shadow_mask.r);
 			else
-				result = lerp(color_shadow,texture_result,shadow_raw_result.r);
+				result = lerp(texture_result,lerp(color_shadow,texture_result,shadow_raw_result.r),shadow_mask.r);
 			break;
 		}
 		case S_RAYTRACE:
@@ -270,29 +272,29 @@ shader_evaluate
 	{	
 		// set outline aov
 		result = color_outline;
-		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_outline], color_outline);
+		AiAOVSetRGB(sg, data->aovs[k_sy_aov_outline], color_outline);
 	}
 	// set flat shader aovs
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_major], color_major);
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_shadow], color_shadow);
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_color_mask], color_mask);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_color_major], color_major);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_color_shadow], color_shadow);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_color_mask], color_mask);
 	// set dynamic shadow aov
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow], shadow_result);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_dynamic_shadow], shadow_result);
 	// set dynamic shadow raw aov
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_dynamic_shadow_raw], shadow_raw_result);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_dynamic_shadow_raw], shadow_raw_result);
 	// set beauty aov
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_sytoons_beauty], result);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_sytoons_beauty], result);
 
 	// caculate normal aov
 	AtRGB normal = AtRGB (sg->N.x,sg->N.y,sg->N.z);
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_normal], normal);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_normal], normal);
 	// caculate facingratio aov
 	AtRGB fresnel = AtRGB (1-AiV3Dot(sg->Nf, -sg->Rd));
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_fresnel], fresnel);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_fresnel], fresnel);
 	// caculate depth aov
 	AtRGB depth = AtRGB (sg->Rl);
 	// caculate occlusion aov
-	AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_depth], depth);
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_depth], depth);
 
 	if(enable_occlusion)
 	{
@@ -317,11 +319,18 @@ shader_evaluate
 		    falloff = 0.001;
 		AtRGB occlusion = AI_RGB_WHITE - AiOcclusion(N,Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
 
-		AiAOVSetRGB(sg, data->aovs_custom[k_sy_aov_occlusion], occlusion);    		
+		AiAOVSetRGB(sg, data->aovs[k_sy_aov_occlusion], occlusion);    		
 	}
 
 
-	sg->out.RGB() = result;
+	// sg->out.RGB() = result;
 	// sg->out_opacity = result_opacity;
+	// new, opacity must be premultiplied into other closures
+	AtClosureList closures;
+	closures.add(AiClosureEmission(sg, result));
+	closures *= result_opacity;
+	closures.add(AiClosureTransparent(sg, 1 - result_opacity));
+	sg->out.CLOSURE() = closures;
+
 }
 

@@ -16,6 +16,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 
 		self.params["lambert_color"] = Param("lambert_color", "Lambert Color", "", "rgb", presets=None)
 		self.params["shadow_ramp"] = Param("shadow_ramp", "Shadow Ramp", "", "rgb", presets=None)
+		self.params["shadow_mask"] = Param("shadow_mask", "Shadow Mask", "", "rgb", presets=None)
 		self.params["shadow_position"] = Param("shadow_position", "Shadow Position", "", "float", presets=None)
 		self.params["normal"] = Param("normal", "Normal", "", "vector", presets=None)
 
@@ -56,6 +57,7 @@ class AEsyToonsTemplate(syShadersTemplate):
 		self.beginLayout("Light Shading", collapse=False)
 		self.addControl("lambert_color", label="Lambert Color", annotation="")
 		self.addControl("shadow_ramp", label="Shadow Ramp", annotation="")
+		self.addControl("shadow_mask", label="Shadow Mask", annotation="")
 		self.addCustomFlt("shadow_position")
 		self.addControl("normal", label="Normal", annotation="")
 		self.endLayout()

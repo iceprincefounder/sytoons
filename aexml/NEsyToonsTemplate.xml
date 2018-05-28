@@ -22,6 +22,9 @@
 		<attribute name="shadowRamp" type="maya.float3">
 			<label>Shadow Ramp</label>
 		</attribute>
+		<attribute name="shadowMask" type="maya.float3">
+			<label>Shadow Mask</label>
+		</attribute>
 		<attribute name="shadowPosition" type="maya.float">
 			<label>Shadow Position</label>
 		</attribute>
@@ -34,6 +37,7 @@
 		<property name="colorOutline" />
 		<property name="lambertColor" />
 		<property name="shadowRamp" />
+		<property name="shadowMask" />
 		<property name="shadowPosition" />
 		</view>
 </templates>
