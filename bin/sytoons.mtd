@@ -4,7 +4,7 @@
 	maya.classification STRING "shader/surface"
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
-	maya.id 0x0012d340
+	maya.id INT 0x0012d340
 	[attr engine]
 		desc STRING ""
 		linkable BOOL FALSE
@@ -88,7 +88,7 @@
 	maya.classification STRING "shader/surface"
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
-	maya.id 0x0012d341
+	maya.id INT 0x0012d341
 	[attr color]
 		desc STRING "Color"
 		linkable BOOL TRUE
@@ -120,7 +120,7 @@
 	maya.classification STRING "utility/color"
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
-	maya.id 0x0012d342
+	maya.id INT 0x0012d342
 
 [node syRemap]
 	desc STRING ""
@@ -128,5 +128,5 @@
 	maya.classification STRING "utility/color"
 	maya.output_name STRING "outColor"
 	maya.output_shortname STRING "out"
-	maya.id 0x0012d343
+	maya.id INT 0x0012d343
 
