@@ -81,3 +81,14 @@ make
 # For details,See wiki
 
 https://github.com/iceprincefounder/sytoons/wiki
+
+# Maya ID
+
+```
+Thank you for registering an Autodesk Maya Developer Node ID Block with us.
+
+    Your Node ID Block is: 0x0012d340 - 0x0012d37f
+    Registered for syToons [Kevin Tsui]
+
+In case of any problems, or questions regarding Maya Node IDs, please contact adn.sparks@autodesk.com
+```
