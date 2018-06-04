@@ -44,6 +44,7 @@ enum Params {
 	p_color_outline,
 	p_lambert_color,
 	p_shadow_ramp,
+	p_shadow_mask,
 	p_shadow_position,
 	p_normal,
 	p_opacity,
@@ -73,8 +74,9 @@ node_parameters
 	AiParameterRGB("color_outline", 0.0f, 0.0f, 0.0f);
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("shadow_ramp", 0.15f, 0.15f, 0.15f);
-	AiParameterFLT("shadow_position", 0.1f);
-	AiParameterVEC("normal", 1.0f, 1.0f, 1.0f);
+	AiParameterRGB("shadow_mask", 1.0f, 1.0f, 1.0f);
+	AiParameterFlt("shadow_position", 0.1f);
+	AiParameterVec("normal", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("opacity", 1.0f, 1.0f, 1.0f);
 	AiParameterBool("casting_light", true);
 	AiParameterBool("enable_occlusion", false);
@@ -131,7 +133,7 @@ shader_evaluate
 	bool casting_light = AiShaderEvalParamBool(p_casting_light);
 	bool enable_occlusion = AiShaderEvalParamBool(p_enable_occlusion);
 	bool use_ramp_color = AiShaderEvalParamBool(p_use_ramp_color);
-
+	AtRGB shadow_mask = AiShaderEvalParamRGB(p_shadow_mask);
 	// do shading
 	AtColor result = AI_RGB_BLACK;
 	AtColor result_opacity = AiShaderEvalParamRGB(p_opacity);
@@ -218,9 +220,9 @@ shader_evaluate
 
 			// result
 			if(use_ramp_color)
-				result = texture_result*shadow_result;
+				result = lerp(texture_result,texture_result*shadow_result,shadow_mask.r);
 			else
-				result = lerp(color_shadow,texture_result,shadow_raw_result.r);
+				result = lerp(texture_result,lerp(color_shadow,texture_result,shadow_raw_result.r),shadow_mask.r);
 			break;
 		}
 		case S_RAYTRACE:
