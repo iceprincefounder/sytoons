@@ -1,15 +1,18 @@
-![sytoons_network](https://github.com/iceprincefounder/sytoons/blob/master/docs/images/sytoons_logo.png)
+
+![sytoons_network](https://user-images.githubusercontent.com/16664056/50583144-8fb4ea80-0ea2-11e9-8f0b-49f2c1be6a64.png)
 
 # sytoons
 
-Arnold sytoons shaders are a shader kit to render cartoon image with power and speed!
+Arnold sytoons shaders are a shader kit to render the celluloid printing style image with power and speed!
+
+We contents a full kit to create custom design and styling images.
 
 # Supported Platforms
 
 
 ----
 
-LINUX    [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed)             WINDOWS    [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed) 
+## LINUX    [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed)   || WINDOWS    [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed) 
 
 ----
 
@@ -78,17 +81,17 @@ cd /path/to/sytoons
 make 
 ```
 
-# For details,See wiki
+# For details,check out our wikis
 
 https://github.com/iceprincefounder/sytoons/wiki
 
 # Maya ID
 
 ```
-Thank you for registering an Autodesk Maya Developer Node ID Block with us.
 
-    Your Node ID Block is: 0x0012d340 - 0x0012d37f
+Autodesk Maya Developer Node ID Block:
+
+    Node ID Block is: 0x0012d340 - 0x0012d37f
     Registered for syToons [Kevin Tsui]
 
-In case of any problems, or questions regarding Maya Node IDs, please contact adn.sparks@autodesk.com
 ```

@@ -1,11 +1,4 @@
-Welcome to the sytoons wiki!
-----
-
-Copyright:
-----
-//Copyright 2017 Beijing ShengYing Film Animation Co.Ltd
-
-//Keep by Kevin Tsui
+//Copyright 2017-2019 Beijing ShengYing Film Animation Co.Ltd
 
 //
 
