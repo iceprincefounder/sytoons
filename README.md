@@ -9,10 +9,9 @@ We contents a full kit to create custom design and styling images.
 
 # Supported Platforms
 
-
-----
-
-## LINUX    [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed)   || WINDOWS    [![Build Status](https://travis-ci.org/appleseedhq/appleseed.svg?branch=master)](https://travis-ci.org/appleseedhq/appleseed) 
+| ----- | windows | linux |
+| ----- | ------ | --- |
+| Master | [![Build Status](https://travis-ci.org/iceprincefounder/sytoons.svg?branch=master)](https://travis-ci.org/iceprincefounder/sytoons) | [![Build Status](https://travis-ci.org/iceprincefounder/sytoons.svg?branch=master)](https://travis-ci.org/iceprincefounder/sytoons) |
 
 ----
 
