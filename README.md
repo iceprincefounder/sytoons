@@ -16,7 +16,7 @@ We contents a full toolkit to create custom design and styling images.
 
 Windows 7 or newer;Centos 6.7 or newer;
 
-Arnold 4.2.11.3 or newer(not support Arnold 5 yet)
+Arnold 5.0.0.0 or newer
 
 ----
 
