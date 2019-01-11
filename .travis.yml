@@ -1,0 +1,15 @@
+sudo: required
+dist: trusty
+
+language: cpp
+
+compiler: gcc
+
+branches:
+  only:
+    - master
+
+#install:
+
+script:
+  - echo 'Building'
