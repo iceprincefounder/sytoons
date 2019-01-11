@@ -9,9 +9,9 @@ We contents a full kit to create custom design and styling images.
 
 # Supported Platforms
 
-| ----- | windows | linux |
-| ----- | ------ | --- |
-| Master | [![Build Status](https://travis-ci.org/iceprincefounder/sytoons.svg?branch=master)](https://travis-ci.org/iceprincefounder/sytoons) | [![Build Status](https://travis-ci.org/iceprincefounder/sytoons.svg?branch=master)](https://travis-ci.org/iceprincefounder/sytoons) |
+| branch | windows | linux |
+| ----- | ------ | ------ |
+| master | [![Build Status](https://travis-ci.org/iceprincefounder/sytoons.svg?branch=master)](https://travis-ci.org/iceprincefounder/sytoons) | [![Build Status](https://travis-ci.org/iceprincefounder/sytoons.svg?branch=master)](https://travis-ci.org/iceprincefounder/sytoons) |
 
 ----
 
