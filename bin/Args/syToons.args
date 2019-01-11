@@ -13,10 +13,12 @@
   <page name="Outline Shading" open="True">
     <param label="Enable Outline" name="enable_outline" widget="checkBox"/>
     <param label="Outline Color" name="color_outline" widget="color"/>
+    <param label="Threshold" name="threshold" slider="True"/>
   </page>
   <page name="Light Shading" open="True">
     <param label="Lambert Color" name="lambert_color" widget="color"/>
     <param label="Shadow Ramp" name="shadow_ramp" widget="color"/>
+    <param label="Shadow Mask" name="shadow_mask" widget="color"/>
     <param label="Shadow Position" name="shadow_position" slider="True"/>
     <param label="Normal" name="normal"/>
   </page>

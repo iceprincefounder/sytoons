@@ -37,10 +37,11 @@ node_loader
          node->node_type   = AI_NODE_SHADER;
       break;
       case syOutline:
-         node->methods     = syOutlineMethods;
-         node->output_type = AI_TYPE_RGB;
-         node->name        = "syOutline";
-         node->node_type   = AI_NODE_SHADER;
+         node->methods      = syOutlineMethods;
+         node->output_type  = AI_TYPE_NONE;
+         node->name         = "syOutline";
+         node->node_type    = AI_NODE_FILTER;
+   strcpy(node->version, AI_VERSION);
       break;
       default:
          return false;

@@ -14,6 +14,7 @@
 //   limitations under the License.
 #include <ai.h>
 #include <cstring>
+#include <stdio.h>
 
 #include <al_util.h>
 #include <syToons.h>
@@ -42,6 +43,7 @@ enum Params {
 	p_color_mask,
 	p_enable_outline,
 	p_color_outline,
+	p_threshold,
 	p_lambert_color,
 	p_shadow_ramp,
 	p_shadow_mask,
@@ -72,6 +74,7 @@ node_parameters
 	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
 	AiParameterBool("enable_outline", false);
 	AiParameterRGB("color_outline", 0.0f, 0.0f, 0.0f);
+	AiParameterFlt("threshold", 0.1f);
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("shadow_ramp", 0.15f, 0.15f, 0.15f);
 	AiParameterRGB("shadow_mask", 1.0f, 1.0f, 1.0f);
@@ -108,6 +111,11 @@ node_update
 	data->hasChainedNormal = AiNodeIsLinked(node, "normal");
 	// set up AOVs
 	REGISTER_AOVS_CUSTOM
+
+    data->aovs.push_back(AiNodeGetStr(node, "sy_outline_uv"));
+    data->aovs.push_back(AiNodeGetStr(node, "sy_outline_ptr"));
+	AiAOVRegister("sy_outline_uv" , AI_TYPE_VECTOR2 );
+	AiAOVRegister("sy_outline_ptr" , AI_TYPE_POINTER);
 }
 
 node_finish
@@ -125,15 +133,23 @@ shader_evaluate
 	ShaderDataToons* data = (ShaderDataToons*)AiNodeGetLocalData(node);
 	// we provide two shading engine,traditional scanline and GI engine raytrace.
 	int shading_engine = AiShaderEvalParamInt(p_engine);
+
 	AtRGB color_major = AiShaderEvalParamRGB(p_color_major);
 	AtRGB color_shadow = AiShaderEvalParamRGB(p_color_shadow);
 	AtRGB color_mask = AiShaderEvalParamRGB(p_color_mask);
-	AtRGB color_outline = AiShaderEvalParamRGB(p_color_outline);
+
 	bool enable_outline = AiShaderEvalParamBool(p_enable_outline);	
+	AtRGB color_outline = AiShaderEvalParamRGB(p_color_outline);
+	float threshold = AiShaderEvalParamFlt(p_threshold);
+
+	AtRGB lambert_color = AiShaderEvalParamRGB(p_lambert_color);
+	AtRGB shadow_ramp = AiShaderEvalParamRGB(p_shadow_ramp);
+	AtRGB shadow_mask = AiShaderEvalParamRGB(p_shadow_mask);
+	float shadow_position = AiShaderEvalParamFlt(p_shadow_position);
+	
 	bool casting_light = AiShaderEvalParamBool(p_casting_light);
 	bool enable_occlusion = AiShaderEvalParamBool(p_enable_occlusion);
 	bool use_ramp_color = AiShaderEvalParamBool(p_use_ramp_color);
-	AtRGB shadow_mask = AiShaderEvalParamRGB(p_shadow_mask);
 	// do shading
 	AtRGB result = AI_RGB_ZERO;
 	AtRGB result_opacity = AiShaderEvalParamRGB(p_opacity);
@@ -158,7 +174,7 @@ shader_evaluate
 		{
 			if(casting_light && sg->Rt & AI_RAY_CAMERA)
 			{
-				AtRGB Kd = AiShaderEvalParamRGB(p_lambert_color);
+				AtRGB Kd = lambert_color;
 				AtRGB Ks = AI_RGB_WHITE;
 				float Wig = 0.28;
 				float roughness = 10 / 0.2;
@@ -185,10 +201,7 @@ shader_evaluate
 				lighting_result = LaD + LaS;
 
 				// caculate flat shadow
-				float diff_t = clamp(diffuse_raw.r, 0.0f, 1.0f);
-				AtRGB shadow_ramp = AiShaderEvalParamRGB(p_shadow_ramp);
-				float shadow_position = AiShaderEvalParamFlt(p_shadow_position);
-				
+				float diff_t = clamp(diffuse_raw.r, 0.0f, 1.0f);				
 				bool isMayaRamp = false;
 				AtRGB diffuseLUT[LUT_SIZE];
 				AtArray* diffusePositions = NULL;
@@ -217,7 +230,7 @@ shader_evaluate
 					}			
 				}
 
-			} // ending if casting light
+			} // ending if
 
 			// result
 			if(use_ramp_color)
@@ -268,16 +281,11 @@ shader_evaluate
 		}
 	}
 
-	if(enable_outline)
-	{	
-		// set outline aov
-		result = color_outline;
-		AiAOVSetRGB(sg, data->aovs[k_sy_aov_outline], color_outline);
-	}
-	// set flat shader aovs
+	// set textures aovs
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_color_major], color_major);
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_color_shadow], color_shadow);
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_color_mask], color_mask);
+
 	// set dynamic shadow aov
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_dynamic_shadow], shadow_result);
 	// set dynamic shadow raw aov
@@ -287,15 +295,59 @@ shader_evaluate
 
 	// caculate normal aov
 	AtRGB normal = AtRGB (sg->N.x,sg->N.y,sg->N.z);
+	// set normal aov
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_normal], normal);
-	// caculate facingratio aov
+
+	// caculate facing ratio aov
 	AtRGB fresnel = AtRGB (1-AiV3Dot(sg->Nf, -sg->Rd));
+	// set facing ratio aov
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_fresnel], fresnel);
+
+	AtVector p[3];
+	AiShaderGlobalsGetTriangle(sg, 1, p);
+	for (unsigned int i =0; i<3; i++)
+	{
+		p[3];
+		// printf("$%f %f %f\n", p[i].x,p[i].y,p[i].z);
+	}
+
+
+	////////////////////////////
+	//Construct the contour ray.
+	AtNode* option = AiUniverseGetOptions();
+	AiNodeGetInt(options, "AA_samples");
+	// AtRay ray;
+	// float samples[2];
+	// AtSamplerIterator *samit = AiSamplerIterator(data->sampler, sg);
+
+	// AtShaderGlobals hitpoint;
+	// AtVector N_total = AtVector(0.f, 0.f, 0.f);
+	// AtVector orig = sg->P + Nn*offset_dist;
+	// int n = 0;
+	// float trace_dist = data->radius*4.f;
+	// float weight_total = 0.f;
+
+
+
+	// caculate outline aov
+	AtRGB outline = AI_RGB_ZERO;
+	// if (AiV3Dot(sg->Ng, -sg->Rd) < threshold)
+	// {
+	// 	outline = color_outline;
+	// 	if (enable_outline)
+	// 		result = outline;
+	// }
+	outline = fresnel*color_outline*(1-AiWireframe(sg, threshold, false,AI_WIREFRAME_POLYGONS ));
+	// set outline aov
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_outline], outline);
+
 	// caculate depth aov
 	AtRGB depth = AtRGB (sg->Rl);
-	// caculate occlusion aov
+	// set depth aov
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_depth], depth);
 
+	// caculate occlusion aov
+	AtRGB occlusion = AI_RGB_ZERO;
 	if(enable_occlusion)
 	{
 
@@ -317,11 +369,10 @@ shader_evaluate
 		// caculate occlusion,if falloff equal to zero,maya would crash
 		if(falloff <= 0)
 		    falloff = 0.001;
-		AtRGB occlusion = AI_RGB_WHITE - AiOcclusion(N,Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
-
-		AiAOVSetRGB(sg, data->aovs[k_sy_aov_occlusion], occlusion);    		
+		occlusion = AI_RGB_WHITE - AiOcclusion(N,Ng,sg,mint,maxt,spread,falloff,sampler,&Nbent);
 	}
-
+	// set OCC aov
+	AiAOVSetRGB(sg, data->aovs[k_sy_aov_occlusion], occlusion);    		
 
 	// sg->out.RGB() = result;
 	// sg->out_opacity = result_opacity;
@@ -333,4 +384,3 @@ shader_evaluate
 	sg->out.CLOSURE() = closures;
 
 }
-
