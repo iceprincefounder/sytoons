@@ -57,13 +57,6 @@ enum AovIndicesToons
 };
 
 
-struct ShaderDataToons
-{
-    bool hasChainedNormal;
-    // AOV names
-    std::vector<AtString> aovs;
-};
-
 #define LUT_SIZE 32
 
 namespace kt{

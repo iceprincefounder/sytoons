@@ -1,5 +1,5 @@
 //
-//Copyright 2017 Beijing ShengYing Film Animation Co.Ltd
+// (c) 2017-2019 Beijing ShengYing Film Animation Co.Ltd All Rights Reserved.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -29,6 +29,15 @@ enum EngineParams
 	S_RAYTRACE
 };
 
+struct ShaderDataToons
+{
+    bool hasChainedNormal;
+    int nsamples;
+    AtSampler* sampler;
+    // AOV names
+    std::vector<AtString> aovs;
+};
+
 const char* engine_params[] = 
 {
 	"Scanline",
@@ -43,6 +52,7 @@ enum Params {
 	p_color_mask,
 	p_enable_outline,
 	p_color_outline,
+	p_contour_width,
 	p_threshold,
 	p_lambert_color,
 	p_shadow_ramp,
@@ -74,6 +84,7 @@ node_parameters
 	AiParameterRGB("color_mask", 1.0f,1.0f,1.0f);
 	AiParameterBool("enable_outline", false);
 	AiParameterRGB("color_outline", 0.0f, 0.0f, 0.0f);
+	AiParameterFlt("contour_width", 0.1f);
 	AiParameterFlt("threshold", 0.1f);
 	AiParameterRGB("lambert_color", 1.0f, 1.0f, 1.0f);
 	AiParameterRGB("shadow_ramp", 0.15f, 0.15f, 0.15f);
@@ -109,6 +120,15 @@ node_update
 {
 	ShaderDataToons* data = (ShaderDataToons*)AiNodeGetLocalData(node);
 	data->hasChainedNormal = AiNodeIsLinked(node, "normal");
+	AtNode* option = AiUniverseGetOptions();
+	data -> nsamples = AiNodeGetInt(option, "AA_samples");
+	
+	if (data->sampler) 
+	{
+		AiSamplerDestroy(data->sampler);
+	}
+	static const uint32_t seed =static_cast<uint32_t>(AiNodeEntryGetNameAtString(AiNodeGetNodeEntry(node)).hash());
+	data->sampler = AiSampler(seed,data->nsamples, 2);
 	// set up AOVs
 	REGISTER_AOVS_CUSTOM
 
@@ -123,8 +143,9 @@ node_finish
 	if (AiNodeGetLocalData(node))
 	{
 		ShaderDataToons* data = (ShaderDataToons*)AiNodeGetLocalData(node);
-		AiNodeSetLocalData(node, NULL);
+		AiSamplerDestroy(data->sampler);
 		delete data;
+		AiNodeSetLocalData(node, NULL);
 	}
 }
 
@@ -140,6 +161,7 @@ shader_evaluate
 
 	bool enable_outline = AiShaderEvalParamBool(p_enable_outline);	
 	AtRGB color_outline = AiShaderEvalParamRGB(p_color_outline);
+	float contour_width = AiShaderEvalParamFlt(p_contour_width);
 	float threshold = AiShaderEvalParamFlt(p_threshold);
 
 	AtRGB lambert_color = AiShaderEvalParamRGB(p_lambert_color);
@@ -314,30 +336,125 @@ shader_evaluate
 
 	////////////////////////////
 	//Construct the contour ray.
-	AtNode* option = AiUniverseGetOptions();
-	AiNodeGetInt(options, "AA_samples");
-	// AtRay ray;
-	// float samples[2];
-	// AtSamplerIterator *samit = AiSamplerIterator(data->sampler, sg);
-
-	// AtShaderGlobals hitpoint;
-	// AtVector N_total = AtVector(0.f, 0.f, 0.f);
-	// AtVector orig = sg->P + Nn*offset_dist;
-	// int n = 0;
-	// float trace_dist = data->radius*4.f;
-	// float weight_total = 0.f;
-
-
-
-	// caculate outline aov
 	AtRGB outline = AI_RGB_ZERO;
+	AtNode* option = AiUniverseGetOptions();
+	int AA_samples = AiNodeGetInt(option, "AA_samples");
+	int id = AiNodeGetInt(option, "AA_samples");
+	float samples[2];
+	AtSamplerIterator *samit = AiSamplerIterator(data->sampler, sg);
+	int m_total = AiSamplerGetSampleCount(samit);
+	AtVector Nn = AiV3Normalize(sg->N);
+	AtVector tangent = AiV3Normalize(sg->dPdu);
+	AtVector bitangent = AiV3Normalize(sg->dPdv);
+
+	AtVector orig = sg->Ro;
+	AtVector I = sg->Ro - sg->P;
+
+
+	float pixel_radius = AiV3Length(AiV3Normalize(sg->dPdx) + AiV3Normalize(sg->dPdy)) * 2.0f;
+	float contour_radius = contour_width * pixel_radius;
+
+	int m_count = 0;
+	int m_true=0;
+	int m_false = 0;
+
+    // Construct the contour ray.
+    AtRay ray;
+    ray.m_org = original_ray.m_org;
+    ray.m_tmin = original_ray.m_tmin;
+    ray.m_tmax = numeric_limits<double>::max();
+    ray.m_time = original_ray.m_time;
+    ray.m_flags = VisibilityFlags::ProbeRay;
+    ray.m_depth = original_ray.m_depth;
+
+    ShadingPoint other_shading_point;
+
+
+
+
+	while(AiSamplerGetSample(samit, samples))
+	{
+		// ==== make the sample ray ==== 
+
+		// try disk
+		float u, v;
+		concentricSampleDisk(samples[0], samples[1], u, v);
+
+		m_count ++;
+
+		const float radius = (static_cast<float>(m_count) * contour_radius) / static_cast<float>(m_total);
+        const float angle_step = 45.0 / static_cast<float>(m_count);
+        const float rad_angle_step = angle_step * (AI_PI / 180.0f);
+
+        const size_t num_samples = static_cast<size_t>(360.0f / angle_step);
+		// for (size_t i = 0; i < num_samples; ++i)
+		// {
+		//     const float angle = static_cast<float>(i) * rad_angle_step;
+		//     const float x = sin(angle);
+		//     const float y = cos(angle);
+
+		//     const AtVector pp =
+		//         (radius * x * u * tangent) + (radius * y * v * bitangent) + sg->P;
+		//     AtVector dir = pp - sg->Ro;
+
+		// 	AtRay ray;
+		// 	ray = AiMakeRay(AI_RAY_CAMERA , sg->Ro, &dir, AI_BIG, sg);
+		// 	AtShaderGlobals hitpoint;
+		// 	if (AiTraceProbe(ray, &hitpoint))
+		// 	{
+		// 		// outline = AI_RGB_WHITE;
+		// 		AtNode* shape = hitpoint.Op;
+		// 		AtString shape_name = AiNodeGetStr(shape, "name");
+		// 		// printf("%i\n", shader_name);
+		// 		m_false ++;
+		// 	}
+		// 	else
+		// 	{
+		// 		// outline = AI_RGB_RED;
+		// 		m_true ++;
+		// 	}
+
+        // }
+        const AtVector pp = (radius * u * tangent) + (radius * v * bitangent) + sg->P;
+		AtVector off = contour_width*(u*tangent + v*bitangent) + sg->P;
+		AtVector dir = pp - sg->Ro;
+		dir = AiV3Normalize(dir);
+		AtRay ray;
+		ray = AiMakeRay(AI_RAY_CAMERA , sg->Ro, &dir, AI_BIG, sg);
+		AtShaderGlobals hitpoint;
+		if (AiTraceProbe(ray, &hitpoint))
+		{
+			// outline = AI_RGB_WHITE;
+			AtNode* shape = hitpoint.Op;
+			AtString shape_name = AiNodeGetStr(shape, "name");
+			// printf("%i\n", shader_name);
+			m_false ++;
+		}
+		else
+		{
+			// outline = AI_RGB_RED;
+			m_true ++;
+		}
+	}// gather samples
+
+	// printf("%i\n", m_count);
+	float th = static_cast<float>(m_true)/(static_cast<float>(m_true + m_false));
+	if ( th > threshold)
+	{
+		outline = color_outline;
+	}
 	// if (AiV3Dot(sg->Ng, -sg->Rd) < threshold)
 	// {
 	// 	outline = color_outline;
 	// 	if (enable_outline)
 	// 		result = outline;
 	// }
-	outline = fresnel*color_outline*(1-AiWireframe(sg, threshold, false,AI_WIREFRAME_POLYGONS ));
+	float wireframe = AiWireframe(sg, contour_width, true,AI_WIREFRAME_POLYGONS);
+	outline = color_outline*(1- wireframe);
+	if (wireframe < threshold)
+		result = color_outline;
+	else
+		result_opacity = AI_RGB_ZERO;
 	// set outline aov
 	AiAOVSetRGB(sg, data->aovs[k_sy_aov_outline], outline);
 

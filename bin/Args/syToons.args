@@ -13,6 +13,7 @@
   <page name="Outline Shading" open="True">
     <param label="Enable Outline" name="enable_outline" widget="checkBox"/>
     <param label="Outline Color" name="color_outline" widget="color"/>
+    <param label="Contour Width" name="contour_width" slider="True"/>
     <param label="Threshold" name="threshold" slider="True"/>
   </page>
   <page name="Light Shading" open="True">
